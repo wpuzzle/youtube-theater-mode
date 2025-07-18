@@ -22,7 +22,7 @@ _現在準備中_
 1. このリポジトリをクローンまたはダウンロード
 
 ```bash
-git clone https://github.com/your-username/youtube-theater-mode.git
+git clone https://github.com/wpuzzle/youtube-theater-mode.git
 ```
 
 2. Chrome で `chrome://extensions/` を開く
@@ -164,7 +164,7 @@ node run-opacity-tests.js
 1. **リポジトリクローン**:
 
 ```bash
-git clone https://github.com/your-username/youtube-theater-mode.git
+git clone https://github.com/wpuzzle/youtube-theater-mode.git
 cd youtube-theater-mode
 ```
 
@@ -202,11 +202,11 @@ python -m http.server 8000
 
 ### バグレポート
 
-[Issues](https://github.com/your-username/youtube-theater-mode/issues)でバグを報告してください。
+[Issues](https://github.com/wpuzzle/youtube-theater-mode/issues)でバグを報告してください。
 
 ### 機能リクエスト
 
-新機能のアイデアは[Discussions](https://github.com/your-username/youtube-theater-mode/discussions)で議論しましょう。
+新機能のアイデアは[Discussions](https://github.com/wpuzzle/youtube-theater-mode/discussions)で議論しましょう。
 
 ### プルリクエスト
 
@@ -227,8 +227,8 @@ MIT License - 詳細は[LICENSE](LICENSE)ファイルを参照
 
 ## 📞 サポート
 
-- **バグレポート**: [GitHub Issues](https://github.com/your-username/youtube-theater-mode/issues)
-- **質問・議論**: [GitHub Discussions](https://github.com/your-username/youtube-theater-mode/discussions)
+- **バグレポート**: [GitHub Issues](https://github.com/wpuzzle/youtube-theater-mode/issues)
+- **質問・議論**: [GitHub Discussions](https://github.com/wpuzzle/youtube-theater-mode/discussions)
 - **メール**: support@example.com
 
 ---

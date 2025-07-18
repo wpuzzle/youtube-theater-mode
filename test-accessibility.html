@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Theater Mode - アクセシビリティテスト</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      color: #c00;
+      border-bottom: 2px solid #c00;
+      padding-bottom: 10px;
+    }
+    h2 {
+      color: #333;
+      margin-top: 30px;
+    }
+    .test-container {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    .test-passed {
+      background-color: #e6ffe6;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 5px solid #4CAF50;
+    }
+    .test-failed {
+      background-color: #ffebeb;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 5px solid #f44336;
+    }
+    .test-info {
+      background-color: #e6f7ff;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 5px solid #2196F3;
+    }
+    .controls {
+      margin: 20px 0;
+    }
+    button {
+      padding: 8px 15px;
+      margin-right: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .note {
+      background-color: #fff3cd;
+      border-left: 5px solid #ffc107;
+      padding: 10px;
+      margin: 20px 0;
+    }
+    #test-results {
+      font-family: monospace;
+      white-space: pre-wrap;
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 4px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .youtube-frame {
+      width: 100%;
+      height: 500px;
+      border: 1px solid #ddd;
+      margin: 20px 0;
+    }
+    .color-simulation {
+      margin: 20px 0;
+    }
+    .color-simulation h3 {
+      margin-bottom: 10px;
+    }
+    .color-simulation-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .color-simulation-item {
+      flex: 1;
+      min-width: 200px;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .color-simulation-item h4 {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    .color-sample {
+      width: 100%;
+      height: 50px;
+      margin-bottom: 10px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    .normal-vision {
+      background-color: #3ea6ff;
+      color: #ffffff;
+    }
+    .protanopia {
+      background-color: #9e9e9e;
+      color: #ffffff;
+    }
+    .deuteranopia {
+      background-color: #a0a0a0;
+      color: #ffffff;
+    }
+    .tritanopia {
+      background-color: #7f7f7f;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <h1>YouTube Theater Mode - アクセシビリティテスト</h1>
+  
+  <div class="note">
+    <p><strong>注意:</strong> このテストは YouTube ページ上で実行する必要があります。以下のフレームで YouTube を読み込み、テストを実行してください。</p>
+  </div>
+  
+  <div class="test-container">
+    <h2>テスト実行</h2>
+    <div class="controls">
+      <button id="load-youtube">YouTube を読み込む</button>
+      <button id="run-tests">アクセシビリティテストを実行</button>
+    </div>
+    
+    <iframe id="youtube-frame" class="youtube-frame" src="about:blank"></iframe>
+    
+    <h2>テスト結果</h2>
+    <div id="test-results">テストを実行すると結果がここに表示されます...</div>
+  </div>
+  
+  <div class="test-container">
+    <h2>色覚異常シミュレーション</h2>
+    <p>以下は、異なる色覚特性を持つユーザーにとってのボタン表示のシミュレーションです。</p>
+    
+    <div class="color-simulation">
+      <h3>シアターモードボタンの見え方</h3>
+      <div class="color-simulation-container">
+        <div class="color-simulation-item">
+          <h4>通常の色覚</h4>
+          <div class="color-sample normal-vision">シアターモード</div>
+          <p>標準的な色覚を持つユーザーには、青色のボタンと白色のテキストとして表示されます。</p>
+        </div>
+        
+        <div class="color-simulation-item">
+          <h4>第一色覚異常（赤色弱）</h4>
+          <div class="color-sample protanopia">シアターモード</div>
+          <p>赤色の感度が低下しているため、青色が灰色がかって見えます。</p>
+        </div>
+        
+        <div class="color-simulation-item">
+          <h4>第二色覚異常（緑色弱）</h4>
+          <div class="color-sample deuteranopia">シアターモード</div>
+          <p>緑色の感度が低下しているため、青色が灰色がかって見えます。</p>
+        </div>
+        
+        <div class="color-simulation-item">
+          <h4>第三色覚異常（青色弱）</h4>
+          <div class="color-sample tritanopia">シアターモード</div>
+          <p>青色の感度が低下しているため、青色が暗い灰色に見えます。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="test-container">
+    <h2>アクセシビリティのベストプラクティス</h2>
+    <div class="test-info">
+      <h3>スクリーンリーダー対応</h3>
+      <ul>
+        <li>すべての操作要素に適切な ARIA 属性を設定する（aria-label, role, aria-pressed など）</li>
+        <li>状態変化を aria-live 領域で通知する</li>
+        <li>フォーカス順序を論理的に保つ</li>
+      </ul>
+    </div>
+    
+    <div class="test-info">
+      <h3>キーボードナビゲーション</h3>
+      <ul>
+        <li>すべての機能がキーボードのみで操作可能であること</li>
+        <li>フォーカスインジケータを視覚的に明確にする</li>
+        <li>ショートカットキーに代替手段を提供する</li>
+      </ul>
+    </div>
+    
+    <div class="test-info">
+      <h3>色覚異常対応</h3>
+      <ul>
+        <li>色だけでなく形状や記号でも情報を伝える</li>
+        <li>十分なコントラスト比を確保する（WCAG AA 基準: 4.5:1 以上）</li>
+        <li>異なる色覚特性でもコンテンツが識別できることを確認する</li>
+      </ul>
+    </div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loadYouTubeButton = document.getElementById('load-youtube');
+      const runTestsButton = document.getElementById('run-tests');
+      const youtubeFrame = document.getElementById('youtube-frame');
+      const testResults = document.getElementById('test-results');
+      
+      // YouTube を読み込む
+      loadYouTubeButton.addEventListener('click', () => {
+        youtubeFrame.src = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'; // サンプル動画
+        testResults.textContent = 'YouTube を読み込みました。ページが完全に読み込まれたらテストを実行してください。';
+      });
+      
+      // テストを実行
+      runTestsButton.addEventListener('click', () => {
+        if (youtubeFrame.src === 'about:blank') {
+          testResults.textContent = 'エラー: 先に YouTube を読み込んでください。';
+          return;
+        }
+        
+        try {
+          // 必要なスクリプトをフレームに注入
+          const frame = youtubeFrame.contentWindow;
+          
+          // テスト結果を取得するためのメッセージリスナー
+          window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'accessibility-test-results') {
+              testResults.textContent = event.data.results;
+            }
+          });
+          
+          // テストスクリプトを注入
+          const script = frame.document.createElement('script');
+          script.src = 'test-accessibility.js';
+          frame.document.head.appendChild(script);
+          
+          testResults.textContent = 'アクセシビリティテストを実行中...';
+        } catch (error) {
+          testResults.textContent = `エラー: ${error.message}`;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

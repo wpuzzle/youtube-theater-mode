@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Theater Mode - Layout Adaptation Tests</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-results {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-line;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .layout-controls {
+            margin: 20px 0;
+            padding: 15px;
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+        .layout-button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        .layout-button:hover {
+            background-color: #0069d9;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 YouTube Theater Mode - Layout Adaptation Tests</h1>
+        <p>このページではYouTubeレイアウト変更に対応する機能の単体テストを実行します。</p>
+        
+        <div class="layout-controls">
+            <h3>レイアウト変更シミュレーション</h3>
+            <p>異なるYouTubeレイアウトをシミュレートします：</p>
+            <button class="layout-button" onclick="changeLayoutSimulation(1)">初期レイアウト</button>
+            <button class="layout-button" onclick="changeLayoutSimulation(2)">新レイアウト</button>
+            <button class="layout-button" onclick="changeLayoutSimulation(3)">要素欠落レイアウト</button>
+        </div>
+        
+        <!-- テスト用のモックYouTube要素 -->
+        <div id="layout-container">
+            <!-- 動的に変更される要素 -->
+            <div id="masthead">Header</div>
+            <div id="movie_player">
+                <div class="html5-video-player">
+                    <video src="dummy.mp4"></video>
+                    <div class="ytp-chrome-controls">Controls</div>
+                </div>
+            </div>
+            <div id="secondary">Sidebar</div>
+            <div id="comments">Comments</div>
+            <div class="ytd-watch-metadata">Metadata</div>
+        </div>
+        
+        <button onclick="runTests()" style="padding: 10px 20px; font-size: 16px; margin: 20px 0; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            テストを実行
+        </button>
+        
+        <div id="test-results" class="test-results">テスト結果がここに表示されます...</div>
+    </div>
+
+    <!-- Content Script を読み込み -->
+    <script src="content.js"></script>
+    
+    <!-- テストスクリプトを読み込み -->
+    <script src="test-layout-adaptation.js"></script>
+    
+    <script>
+        // レイアウト変更シミュレーション
+        function changeLayoutSimulation(version) {
+            const container = document.getElementById('layout-container');
+            container.innerHTML = '';
+            
+            if (version === 1) {
+                // 初期レイアウト
+                container.innerHTML = `
+                    <div id="masthead">Header</div>
+                    <div id="movie_player">
+                        <div class="html5-video-player">
+                            <video src="dummy.mp4"></video>
+                            <div class="ytp-chrome-controls">Controls</div>
+                        </div>
+                    </div>
+                    <div id="secondary">Sidebar</div>
+                    <div id="comments">Comments</div>
+                    <div class="ytd-watch-metadata">Metadata</div>
+                `;
+            } else if (version === 2) {
+                // 新しいレイアウト
+                container.innerHTML = `
+                    <div class="ytd-masthead">New Header</div>
+                    <div data-testid="video-player">
+                        <div class="ytp-player-content">
+                            <video src="dummy.mp4"></video>
+                            <div class="ytp-chrome-controls">New Controls</div>
+                        </div>
+                    </div>
+                    <div class="ytd-watch-next-secondary-results-renderer">New Sidebar</div>
+                    <div class="ytd-comments">New Comments</div>
+                `;
+            } else if (version === 3) {
+                // 要素が欠落したレイアウト
+                container.innerHTML = `
+                    <div id="player-container">
+                        <video src="dummy.mp4"></video>
+                    </div>
+                    <!-- 他の要素は存在しない -->
+                `;
+            }
+            
+            document.getElementById('test-results').innerHTML = `レイアウトをバージョン ${version} に変更しました。テストを実行してください。`;
+        }
+        
+        // テスト実行関数
+        function runTests() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = 'テストを実行中...\n';
+            
+            // コンソール出力をキャプチャ
+            const originalLog = console.log;
+            const originalWarn = console.warn;
+            const originalError = console.error;
+            let output = '';
+            
+            console.log = function(...args) {
+                const message = args.join(' ');
+                output += message + '\n';
+                originalLog.apply(console, args);
+            };
+            
+            console.warn = function(...args) {
+                const message = args.join(' ');
+                output += '⚠️ ' + message + '\n';
+                originalWarn.apply(console, args);
+            };
+            
+            console.error = function(...args) {
+                const message = args.join(' ');
+                output += '🔴 ' + message + '\n';
+                originalError.apply(console, args);
+            };
+            
+            try {
+                // テストを実行
+                runLayoutAdaptationTests();
+                
+                // 結果を表示
+                setTimeout(() => {
+                    resultsDiv.innerHTML = output;
+                    console.log = originalLog;
+                    console.warn = originalWarn;
+                    console.error = originalError;
+                }, 100);
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `エラーが発生しました: ${error.message}\n${output}`;
+                console.log = originalLog;
+                console.warn = originalWarn;
+                console.error = originalError;
+            }
+        }
+        
+        // ページ読み込み時に基本的な検証を実行
+        window.addEventListener('load', () => {
+            console.log('🔍 Layout Adaptation Test Initialization:');
+            console.log('YouTubeSelectors defined:', typeof YouTubeSelectors !== 'undefined');
+            console.log('ElementDetector defined:', typeof ElementDetector !== 'undefined');
+            
+            if (typeof ElementDetector !== 'undefined') {
+                console.log('Initial video player detection:', ElementDetector.findVideoPlayer() !== null);
+            }
+        });
+    </script>
+</body>
+</html>

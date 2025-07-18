@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プレビュー表示と実際の動作の一致テスト - YouTube Theater Mode</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .test-pass {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-fail {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #555;
+        }
+        .description {
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>プレビュー表示と実際の動作の一致テスト</h1>
+        <div class="description">
+            <p>このテストは、ポップアップのプレビュー表示が実際の動作と一致しているかを確認します。</p>
+            <p>スライダーを動かすと、プレビュー表示と実際の動作の両方が更新されます。</p>
+            <p>テストでは、様々な透明度の値でプレビュー表示と実際の動作が一致しているかを確認します。</p>
+        </div>
+        
+        <h2>テスト結果</h2>
+        <div id="test-results"></div>
+    </div>
+    
+    <script src="test-preview-match.js"></script>
+</body>
+</html>

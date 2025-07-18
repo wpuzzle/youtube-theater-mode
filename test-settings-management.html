@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings Management Tests - YouTube Theater Mode</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .test-pass {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .test-fail {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .test-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        .settings-display {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Settings Management Tests - YouTube Theater Mode</h1>
+    
+    <div class="test-container">
+        <h2>設定管理システムテスト</h2>
+        <div class="controls">
+            <button class="btn-primary" onclick="runAllTests()">全テスト実行</button>
+            <button class="btn-secondary" onclick="clearResults()">結果クリア</button>
+            <button class="btn-danger" onclick="resetSettings()">設定リセット</button>
+        </div>
+        <div id="test-results"></div>
+    </div>
+
+    <div class="test-container">
+        <h2>現在の設定状態</h2>
+        <div id="current-settings" class="settings-display">設定を読み込み中...</div>
+        <button class="btn-secondary" onclick="displayCurrentSettings()">設定を更新</button>
+    </div>
+
+    <div class="test-container">
+        <h2>手動テスト</h2>
+        <div class="controls">
+            <button class="btn-primary" onclick="testSaveSettings()">設定保存テスト</button>
+            <button class="btn-primary" onclick="testLoadSettings()">設定読み込みテスト</button>
+            <button class="btn-primary" onclick="testValidation()">バリデーションテスト</button>
+            <button class="btn-primary" onclick="testUpdateSetting()">設定更新テスト</button>
+        </div>
+    </div>
+
+    <script src="test-settings-management.js"></script>
+</body>
+</html>

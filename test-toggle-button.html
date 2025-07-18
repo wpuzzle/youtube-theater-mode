@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Theater Mode - Toggle Button Tests</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .test-container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .test-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #1e7e34;
+        }
+        
+        .test-output {
+            background-color: #1e1e1e;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 6px;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .test-status {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .status-running {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .mock-youtube-player {
+            background-color: #000;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+            min-height: 200px;
+        }
+        
+        .mock-video-area {
+            background-color: #333;
+            border-radius: 4px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .mock-controls {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .theater-mode-toggle-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .theater-mode-toggle-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .theater-mode-toggle-button.theater-mode-active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .theater-mode-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            pointer-events: none;
+        }
+        
+        .theater-mode-fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        .theater-mode-fade-out {
+            animation: fadeOut 0.3s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        .ytp-button {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 8px;
+        }
+        
+        .info-box {
+            background-color: #e7f3ff;
+            border: 1px solid #b8daff;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .info-box h4 {
+            margin: 0 0 10px 0;
+            color: #004085;
+        }
+        
+        .info-box p {
+            margin: 0;
+            color: #004085;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎬 YouTube Theater Mode</h1>
+        <h2>Toggle Button Tests</h2>
+        <p>シアターモード切り替えボタンの機能テスト</p>
+    </div>
+
+    <div class="test-container">
+        <div class="info-box">
+            <h4>📋 テスト概要</h4>
+            <p>このページでは、YouTube Theater Mode拡張機能のシアターモード切り替えボタンの機能をテストします。各テストは独立して実行され、ボタンの作成、クリック処理、状態表示、エラーハンドリングなどを検証します。</p>
+        </div>
+
+        <div class="test-controls">
+            <button class="btn btn-primary" onclick="runAllTests()">🚀 全テスト実行</button>
+            <button class="btn btn-secondary" onclick="clearOutput()">🗑️ 出力クリア</button>
+            <button class="btn btn-success" onclick="showMockPlayer()">👁️ モックプレーヤー表示</button>
+        </div>
+
+        <div id="testStatus" class="test-status" style="display: none;">
+            テスト実行中...
+        </div>
+
+        <div class="mock-youtube-player" id="mockPlayer" style="display: none;">
+            <div class="mock-video-area">
+                Mock YouTube Video Player
+            </div>
+            <div class="mock-controls ytp-chrome-controls">
+                <div class="ytp-right-controls">
+                    <!-- ボタンがここに動的に追加されます -->
+                </div>
+            </div>
+        </div>
+
+        <div class="test-output" id="testOutput">
+            テスト結果がここに表示されます...
+        </div>
+    </div>
+
+    <!-- Content Script を読み込み -->
+    <script src="content.js"></script>
+    
+    <!-- テストスクリプトを読み込み -->
+    <script src="test-toggle-button.js"></script>
+
+    <script>
+        // コンソール出力をキャプチャしてページに表示
+        const originalConsoleLog = console.log;
+        const originalConsoleError = console.error;
+        const originalConsoleWarn = console.warn;
+        
+        const testOutput = document.getElementById('testOutput');
+        const testStatus = document.getElementById('testStatus');
+        
+        function appendToOutput(message, type = 'log') {
+            const timestamp = new Date().toLocaleTimeString();
+            const colorMap = {
+                log: '#f8f8f2',
+                error: '#ff6b6b',
+                warn: '#feca57',
+                success: '#48dbfb'
+            };
+            
+            const color = colorMap[type] || colorMap.log;
+            testOutput.innerHTML += `<div style="color: ${color};">[${timestamp}] ${message}</div>`;
+            testOutput.scrollTop = testOutput.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            const message = args.join(' ');
+            appendToOutput(message, 'log');
+            originalConsoleLog.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            const message = args.join(' ');
+            appendToOutput(message, 'error');
+            originalConsoleError.apply(console, args);
+        };
+        
+        console.warn = function(...args) {
+            const message = args.join(' ');
+            appendToOutput(message, 'warn');
+            originalConsoleWarn.apply(console, args);
+        };
+        
+        // テスト実行関数
+        async function runAllTests() {
+            testStatus.style.display = 'block';
+            testStatus.className = 'test-status status-running';
+            testStatus.textContent = 'テスト実行中...';
+            
+            clearOutput();
+            
+            try {
+                console.log('🎬 YouTube Theater Mode - Toggle Button Tests Starting...');
+                const results = await runAllButtonTests();
+                
+                testStatus.className = 'test-status status-success';
+                testStatus.textContent = `テスト完了: ${results.passed}/${results.total} 成功`;
+                
+                console.log('✅ All tests completed successfully!');
+                
+            } catch (error) {
+                testStatus.className = 'test-status status-error';
+                testStatus.textContent = `テスト実行エラー: ${error.message}`;
+                
+                console.error('❌ Test execution failed:', error);
+            }
+        }
+        
+        // 出力クリア関数
+        function clearOutput() {
+            testOutput.innerHTML = '';
+        }
+        
+        // モックプレーヤー表示関数
+        function showMockPlayer() {
+            const mockPlayer = document.getElementById('mockPlayer');
+            if (mockPlayer.style.display === 'none') {
+                mockPlayer.style.display = 'block';
+                console.log('Mock YouTube player displayed');
+            } else {
+                mockPlayer.style.display = 'none';
+                console.log('Mock YouTube player hidden');
+            }
+        }
+        
+        // ページ読み込み完了時の初期化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎬 YouTube Theater Mode Toggle Button Test Page Loaded');
+            console.log('Click "全テスト実行" to start testing the toggle button functionality');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Theater Mode - ショートカットキー保護統合テスト</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #c00;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+        }
+        .test-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .test-description {
+            margin-bottom: 15px;
+            color: #666;
+        }
+        .test-controls {
+            margin-bottom: 15px;
+        }
+        button {
+            background-color: #c00;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #a00;
+        }
+        .results {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .mock-player {
+            width: 640px;
+            height: 360px;
+            background-color: #000;
+            position: relative;
+            margin: 20px 0;
+        }
+        .mock-video {
+            width: 100%;
+            height: 100%;
+            background-color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+        }
+        .mock-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+        }
+        .shortcut-info {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        .shortcut-key {
+            display: inline-block;
+            background-color: #eee;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 2px 6px;
+            margin: 0 3px;
+            font-family: monospace;
+        }
+        .theater-mode-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 9998;
+            pointer-events: none;
+        }
+        .theater-mode-video-area {
+            position: relative;
+            z-index: 9999;
+            pointer-events: auto;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 3px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .log-entry.success {
+            color: green;
+        }
+        .log-entry.error {
+            color: red;
+        }
+        .log-entry.info {
+            color: blue;
+        }
+        .keyboard-guide {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .keyboard-guide h3 {
+            margin-top: 0;
+        }
+        .keyboard-guide table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .keyboard-guide th, .keyboard-guide td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .keyboard-guide th {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>YouTube Theater Mode - ショートカットキー保護統合テスト</h1>
+        
+        <div class="test-section">
+            <div class="test-title">テスト: YouTube ショートカットキー保護の統合</div>
+            <div class="test-description">
+                シアターモード有効時に YouTube の標準ショートカットキー（スペースキー、矢印キーなど）が正常に動作することを確認します。
+                このテストでは、キーボードイベントが正しく処理され、動画プレーヤーの操作が可能かどうかをテストします。
+            </div>
+            
+            <div class="shortcut-info">
+                <strong>テスト方法:</strong> シアターモードを有効にした状態で、以下のショートカットキーを押してください。
+                各キーの動作が正しく記録されます。
+            </div>
+            
+            <div class="mock-player" id="movie_player" tabindex="0">
+                <div class="mock-video" id="mockVideo">
+                    モック動画プレーヤー
+                </div>
+                <div class="mock-controls" id="mockControls">
+                    <button class="ytp-play-button" id="playButton">▶</button>
+                    <div class="ytp-progress-bar" id="progressBar">
+                        <div class="ytp-progress-bar-filled" id="progressFilled"></div>
+                    </div>
+                    <button class="ytp-mute-button" id="volumeButton">🔊</button>
+                    <button class="ytp-fullscreen-button" id="fullscreenButton">⛶</button>
+                </div>
+            </div>
+            
+            <div class="keyboard-guide">
+                <h3>テスト用ショートカットキー</h3>
+                <table>
+                    <tr>
+                        <th>キー</th>
+                        <th>機能</th>
+                    </tr>
+                    <tr>
+                        <td><span class="shortcut-key">Space</span> または <span class="shortcut-key">K</span></td>
+                        <td>再生/一時停止</td>
+                    </tr>
+                    <tr>
+                        <td><span class="shortcut-key">←</span> または <span class="shortcut-key">J</span></td>
+                        <td>巻き戻し</td>
+                    </tr>
+                    <tr>
+                        <td><span class="shortcut-key">→</span> または <span class="shortcut-key">L</span></td>
+                        <td>早送り</td>
+                    </tr>
+                    <tr>
+                        <td><span class="shortcut-key">↑</span></td>
+                        <td>音量アップ</td>
+                    </tr>
+                    <tr>
+                        <td><span class="shortcut-key">↓</span></td>
+                        <td>音量ダウン</td>
+                    </tr>
+                    <tr>
+                        <td><span class="shortcut-key">M</span></td>
+                        <td>ミュート切り替え</td>
+                    </tr>
+                    <tr>
+                        <td><span class="shortcut-key">F</span></td>
+                        <td>フルスクリーン切り替え</td>
+                    </tr>
+                    <tr>
+                        <td><span class="shortcut-key">0-9</span></td>
+                        <td>動画の特定位置へ移動</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="test-controls">
+                <button id="toggleTheaterMode">シアターモード切り替え</button>
+                <button id="runTests">テスト実行</button>
+                <button id="clearLog">ログをクリア</button>
+            </div>
+            
+            <div class="results" id="testResults"></div>
+        </div>
+    </div>
+
+    <script src="youtube-shortcut-protection.js"></script>
+    <script>
+        // テストログ機能
+        function log(message, type = 'info') {
+            const resultsElement = document.getElementById('testResults');
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${type}`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            resultsElement.appendChild(logEntry);
+            resultsElement.scrollTop = resultsElement.scrollHeight;
+            
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+
+        // モックTheaterModeController
+        class TheaterModeController {
+            constructor() {
+                this.isTheaterModeActive = false;
+                this.overlayElement = null;
+                this.currentOpacity = 0.7;
+                
+                // イベントリスナーの設定
+                document.getElementById('toggleTheaterMode').addEventListener('click', () => {
+                    this.toggleTheaterMode();
+                });
+                
+                document.getElementById('runTests').addEventListener('click', () => {
+                    this.runShortcutTests();
+                });
+                
+                document.getElementById('clearLog').addEventListener('click', () => {
+                    document.getElementById('testResults').innerHTML = '';
+                });
+                
+                // モックプレーヤーのイベントリスナー
+                this.setupMockPlayer();
+                
+                // ショートカット保護を初期化
+                this.initializeShortcutProtection();
+            }
+            
+            initializeShortcutProtection() {
+                this.shortcutProtection = new YouTubeShortcutProtection();
+                this.shortcutProtection.initialize(this);
+                log('ショートカット保護機能が初期化されました', 'info');
+            }
+            
+            setupMockPlayer() {
+                // 再生/一時停止ボタン
+                document.getElementById('playButton').addEventListener('click', () => {
+                    const button = document.getElementById('playButton');
+                    if (button.textContent === '▶') {
+                        button.textContent = '⏸';
+                        log('再生ボタンがクリックされました', 'success');
+                    } else {
+                        button.textContent = '▶';
+                        log('一時停止ボタンがクリックされました', 'success');
+                    }
+                });
+                
+                // 音量ボタン
+                document.getElementById('volumeButton').addEventListener('click', () => {
+                    const button = document.getElementById('volumeButton');
+                    if (button.textContent === '🔊') {
+                        button.textContent = '🔇';
+                        log('ミュートが有効になりました', 'success');
+                    } else {
+                        button.textContent = '🔊';
+                        log('ミュートが解除されました', 'success');
+                    }
+                });
+                
+                // フルスクリーンボタン
+                document.getElementById('fullscreenButton').addEventListener('click', () => {
+                    log('フルスクリーンボタンがクリックされました', 'success');
+                    this.toggleFullscreen();
+                });
+                
+                // プレーヤーにフォーカスを設定
+                document.getElementById('movie_player').focus();
+            }
+            
+            toggleTheaterMode() {
+                if (this.isTheaterModeActive) {
+                    this.disableTheaterMode();
+                } else {
+                    this.enableTheaterMode();
+                }
+            }
+            
+            enableTheaterMode() {
+                log('シアターモードを有効化しています...', 'info');
+                
+                this.applyOverlay();
+                this.isTheaterModeActive = true;
+                
+                document.getElementById('toggleTheaterMode').textContent = 'シアターモード無効化';
+                log('シアターモードが有効になりました', 'success');
+                
+                // プレーヤーに再度フォーカスを当てる
+                document.getElementById('movie_player').focus();
+            }
+            
+            disableTheaterMode() {
+                log('シアターモードを無効化しています...', 'info');
+                
+                this.removeOverlay();
+                this.isTheaterModeActive = false;
+                
+                document.getElementById('toggleTheaterMode').textContent = 'シアターモード有効化';
+                log('シアターモードが無効になりました', 'success');
+                
+                // プレーヤーに再度フォーカスを当てる
+                document.getElementById('movie_player').focus();
+            }
+            
+            applyOverlay() {
+                // 既存のオーバーレイを削除
+                this.removeOverlay();
+                
+                try {
+                    // オーバーレイ要素を作成
+                    this.overlayElement = document.createElement('div');
+                    this.overlayElement.className = 'theater-mode-overlay';
+                    this.overlayElement.style.backgroundColor = `rgba(0, 0, 0, ${this.currentOpacity})`;
+                    
+                    // オーバーレイをページに追加
+                    document.body.appendChild(this.overlayElement);
+                    
+                    // 動画プレーヤーを保護（z-indexを上げる）
+                    const videoPlayer = document.getElementById('movie_player');
+                    if (videoPlayer) {
+                        videoPlayer.classList.add('theater-mode-video-area');
+                        log('動画プレーヤーがオーバーレイから保護されました', 'success');
+                    } else {
+                        log('動画プレーヤーが見つかりませんでした', 'error');
+                    }
+                } catch (error) {
+                    log(`オーバーレイ適用中にエラーが発生しました: ${error.message}`, 'error');
+                    this.removeOverlay();
+                }
+            }
+            
+            removeOverlay() {
+                try {
+                    // オーバーレイ要素を削除
+                    if (this.overlayElement && this.overlayElement.parentNode) {
+                        this.overlayElement.parentNode.removeChild(this.overlayElement);
+                    }
+                    this.overlayElement = null;
+                    
+                    // 動画プレーヤーの保護クラスを削除
+                    const videoPlayer = document.getElementById('movie_player');
+                    if (videoPlayer) {
+                        videoPlayer.classList.remove('theater-mode-video-area');
+                    }
+                    
+                    log('オーバーレイが削除されました', 'info');
+                } catch (error) {
+                    log(`オーバーレイ削除中にエラーが発生しました: ${error.message}`, 'error');
+                }
+            }
+            
+            toggleFullscreen() {
+                try {
+                    const player = document.getElementById('movie_player');
+                    if (!document.fullscreenElement) {
+                        if (player.requestFullscreen) {
+                            player.requestFullscreen();
+                        }
+                        log('フルスクリーンモードになりました', 'success');
+                    } else {
+                        if (document.exitFullscreen) {
+                            document.exitFullscreen();
+                        }
+                        log('フルスクリーンモードを終了しました', 'success');
+                    }
+                } catch (error) {
+                    log(`フルスクリーン切り替え中にエラーが発生しました: ${error.message}`, 'error');
+                }
+            }
+            
+            runShortcutTests() {
+                log('=== ショートカットキーテスト開始 ===', 'info');
+                
+                // プレーヤーにフォーカスを当てる
+                document.getElementById('movie_player').focus();
+                
+                // 各ショートカットキーをシミュレート
+                const testKeys = [
+                    { key: ' ', name: 'スペースキー (再生/一時停止)' },
+                    { key: 'k', name: 'Kキー (再生/一時停止)' },
+                    { key: 'ArrowLeft', name: '左矢印キー (巻き戻し)' },
+                    { key: 'j', name: 'Jキー (巻き戻し)' },
+                    { key: 'ArrowRight', name: '右矢印キー (早送り)' },
+                    { key: 'l', name: 'Lキー (早送り)' },
+                    { key: 'ArrowUp', name: '上矢印キー (音量アップ)' },
+                    { key: 'ArrowDown', name: '下矢印キー (音量ダウン)' },
+                    { key: 'm', name: 'Mキー (ミュート切り替え)' },
+                    { key: 'f', name: 'Fキー (フルスクリーン切り替え)' },
+                    { key: '0', name: '0キー (動画の先頭へ)' },
+                    { key: '5', name: '5キー (動画の50%位置へ)' }
+                ];
+                
+                // 各キーを順番にテスト
+                let index = 0;
+                const testNextKey = () => {
+                    if (index >= testKeys.length) {
+                        log('=== ショートカットキーテスト完了 ===', 'success');
+                        return;
+                    }
+                    
+                    const testKey = testKeys[index++];
+                    log(`テスト: ${testKey.name}`, 'info');
+                    
+                    // キーイベントをシミュレート
+                    const keyEvent = new KeyboardEvent('keydown', { key: testKey.key, bubbles: true });
+                    document.getElementById('movie_player').dispatchEvent(keyEvent);
+                    
+                    // 次のキーテストを予約
+                    setTimeout(testNextKey, 500);
+                };
+                
+                // テスト開始
+                testNextKey();
+            }
+        }
+        
+        // テストコントローラーを初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            const controller = new TheaterModeController();
+            log('テスト環境が初期化されました。「シアターモード切り替え」ボタンをクリックしてテストを開始してください。', 'info');
+        });
+    </script>
+</body>
+</html>

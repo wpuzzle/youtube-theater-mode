@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Theater Mode - 統合テスト</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      color: #c00;
+      border-bottom: 2px solid #c00;
+      padding-bottom: 10px;
+    }
+    h2 {
+      color: #333;
+      margin-top: 30px;
+    }
+    .test-container {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    .test-passed {
+      background-color: #e6ffe6;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 5px solid #4CAF50;
+    }
+    .test-failed {
+      background-color: #ffebeb;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 5px solid #f44336;
+    }
+    .test-info {
+      background-color: #e6f7ff;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 5px solid #2196F3;
+    }
+    .controls {
+      margin: 20px 0;
+    }
+    button {
+      padding: 8px 15px;
+      margin-right: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .note {
+      background-color: #fff3cd;
+      border-left: 5px solid #ffc107;
+      padding: 10px;
+      margin: 20px 0;
+    }
+    #test-results {
+      font-family: monospace;
+      white-space: pre-wrap;
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 4px;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .youtube-frame {
+      width: 100%;
+      height: 500px;
+      border: 1px solid #ddd;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>YouTube Theater Mode - 統合テスト</h1>
+  
+  <div class="note">
+    <p><strong>注意:</strong> このテストは YouTube ページ上で実行する必要があります。以下のフレームで YouTube を読み込み、テストを実行してください。</p>
+  </div>
+  
+  <div class="test-container">
+    <h2>テスト実行</h2>
+    <div class="controls">
+      <button id="load-youtube">YouTube を読み込む</button>
+      <button id="run-tests">テストを実行</button>
+    </div>
+    
+    <iframe id="youtube-frame" class="youtube-frame" src="about:blank"></iframe>
+    
+    <h2>テスト結果</h2>
+    <div id="test-results">テストを実行すると結果がここに表示されます...</div>
+  </div>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const loadYouTubeButton = document.getElementById('load-youtube');
+      const runTestsButton = document.getElementById('run-tests');
+      const youtubeFrame = document.getElementById('youtube-frame');
+      const testResults = document.getElementById('test-results');
+      
+      // YouTube を読み込む
+      loadYouTubeButton.addEventListener('click', () => {
+        youtubeFrame.src = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'; // サンプル動画
+        testResults.textContent = 'YouTube を読み込みました。ページが完全に読み込まれたらテストを実行してください。';
+      });
+      
+      // テストを実行
+      runTestsButton.addEventListener('click', () => {
+        if (youtubeFrame.src === 'about:blank') {
+          testResults.textContent = 'エラー: 先に YouTube を読み込んでください。';
+          return;
+        }
+        
+        try {
+          // 必要なスクリプトをフレームに注入
+          const frame = youtubeFrame.contentWindow;
+          
+          // テスト結果を取得するためのメッセージリスナー
+          window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'test-results') {
+              testResults.textContent = event.data.results;
+            }
+          });
+          
+          // テストスクリプトを注入
+          const script = frame.document.createElement('script');
+          script.src = 'test-integration.js';
+          frame.document.head.appendChild(script);
+          
+          testResults.textContent = 'テストを実行中...';
+        } catch (error) {
+          testResults.textContent = `エラー: ${error.message}`;
+        }
+      });
+    });
+  </script>
+</body>
+</html>

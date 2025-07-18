@@ -1,0 +1,553 @@
+/**
+ * YouTube Theater Mode - スタイルシート
+ * シアターモード時の視覚効果を定義
+ */
+
+/* カスタムプロパティでデフォルト透明度を設定 */
+:root {
+  --theater-mode-opacity: 0.7;
+}
+
+/* シアターモード用オーバーレイ - ハードウェアアクセラレーション最適化 */
+.theater-mode-overlay {
+  /* 要素自体の透明度を変更 - カスタムプロパティを使用 */
+  opacity: var(--theater-mode-opacity) !important;
+  pointer-events: auto !important; /* ポインターイベントを有効に */
+  
+  /* ハードウェアアクセラレーション最適化 */
+  transform: translateZ(0) !important;
+  will-change: opacity !important;
+  backface-visibility: hidden !important;
+  perspective: 1000px !important;
+  
+  /* スムーズなトランジション効果 */
+  transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+}
+
+/* 動画プレーヤー領域の除外 */
+.theater-mode-video-area {
+  position: relative;
+  z-index: 9999;
+  pointer-events: auto;
+}
+
+/* シアターモード有効時のボディ */
+body.theater-mode-active {
+  overflow: hidden;
+}
+
+/* フェードイン・フェードアウトアニメーション - ハードウェアアクセラレーション最適化 */
+.theater-mode-fade-in {
+  opacity: 1;
+  transform: translateZ(0) scale(1);
+  transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.theater-mode-fade-out {
+  opacity: 0;
+  transform: translateZ(0) scale(0.98);
+  transition: opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1), transform 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* シアターモード切り替えボタンのスタイル - YouTube デザインに調和 - ハードウェアアクセラレーション最適化 */
+.theater-mode-toggle-button {
+  /* YouTube の標準ボタンスタイルに合わせる */
+  background: transparent !important;
+  border: none !important;
+  color: #fff !important;
+  cursor: pointer !important;
+  padding: 8px !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  width: 48px !important;
+  height: 48px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  vertical-align: top !important;
+  
+  /* ハードウェアアクセラレーション最適化 */
+  transform: translateZ(0) !important;
+  will-change: opacity, transform, background-color !important;
+  backface-visibility: hidden !important;
+  
+  /* スムーズなトランジション効果 */
+  transition: opacity 0.1s cubic-bezier(0.4, 0.0, 1, 1),
+              transform 0.1s cubic-bezier(0.4, 0.0, 1, 1),
+              background-color 0.1s cubic-bezier(0.4, 0.0, 1, 1) !important;
+  
+  /* 初期状態の透明度 */
+  opacity: 0.9 !important;
+  
+  /* フォーカス可能要素として設定 */
+  outline: none !important;
+  
+  /* YouTube の標準フォント設定 */
+  font-family: "YouTube Sans", "Roboto", sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+  
+  /* ユーザー選択を無効化 */
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+/* ホバー状態 - YouTube の標準ホバー効果 */
+.theater-mode-toggle-button:hover {
+  opacity: 1 !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* フォーカス状態 - アクセシビリティ対応 */
+.theater-mode-toggle-button:focus {
+  opacity: 1 !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.theater-mode-toggle-button:focus-visible {
+  outline: 2px solid rgba(62, 166, 255, 0.4) !important;
+  outline-offset: 2px !important;
+}
+
+/* アクティブ状態（押下時） */
+.theater-mode-toggle-button:active {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  transform: scale(0.96) !important;
+}
+
+/* シアターモード有効時のスタイル */
+.theater-mode-toggle-button.theater-mode-active {
+  opacity: 1 !important;
+  background-color: rgba(255, 255, 255, 0.12) !important;
+  color: #3ea6ff !important; /* YouTube のアクセントカラー */
+}
+
+.theater-mode-toggle-button.theater-mode-active:hover {
+  background-color: rgba(255, 255, 255, 0.18) !important;
+  color: #65b7ff !important;
+}
+
+.theater-mode-toggle-button.theater-mode-active:active {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* ボタンアイコンのスタイル */
+.theater-mode-toggle-button svg {
+  width: 24px !important;
+  height: 24px !important;
+  fill: currentColor !important;
+  transition: transform 0.1s cubic-bezier(0.4, 0.0, 1, 1) !important;
+  pointer-events: none !important;
+  display: block !important;
+}
+
+.theater-mode-toggle-button:hover svg {
+  transform: scale(1.05) !important;
+}
+
+.theater-mode-toggle-button:active svg {
+  transform: scale(0.95) !important;
+}
+
+/* アイコンの色調整 */
+.theater-mode-toggle-button.theater-mode-active svg {
+  fill: #3ea6ff !important;
+}
+
+.theater-mode-toggle-button.theater-mode-active:hover svg {
+  fill: #65b7ff !important;
+}
+
+/* レスポンシブ対応 - YouTube の標準サイズに合わせる */
+
+/* タブレット・小さなデスクトップ */
+@media (max-width: 1024px) {
+  .theater-mode-toggle-button {
+    width: 40px !important;
+    height: 40px !important;
+    padding: 8px !important;
+  }
+  
+  .theater-mode-toggle-button svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+}
+
+/* タブレット縦向き・大きなスマートフォン */
+@media (max-width: 768px) {
+  .theater-mode-toggle-button {
+    width: 36px !important;
+    height: 36px !important;
+    padding: 6px !important;
+  }
+  
+  .theater-mode-toggle-button svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+  
+  /* モバイルでのホバー効果を調整 */
+  .theater-mode-toggle-button:hover svg {
+    transform: none !important;
+  }
+}
+
+/* スマートフォン */
+@media (max-width: 480px) {
+  .theater-mode-toggle-button {
+    width: 32px !important;
+    height: 32px !important;
+    padding: 4px !important;
+    min-width: 32px !important;
+  }
+  
+  .theater-mode-toggle-button svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+  
+  /* タッチデバイスでのアクティブ状態調整 */
+  .theater-mode-toggle-button:active {
+    transform: scale(0.9) !important;
+  }
+}
+
+/* 非常に小さなスマートフォン */
+@media (max-width: 360px) {
+  .theater-mode-toggle-button {
+    width: 28px !important;
+    height: 28px !important;
+    padding: 2px !important;
+    min-width: 28px !important;
+  }
+  
+  .theater-mode-toggle-button svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+}
+
+/* 大画面での調整 */
+@media (min-width: 1440px) {
+  .theater-mode-toggle-button {
+    width: 48px !important;
+    height: 48px !important;
+    padding: 12px !important;
+  }
+  
+  .theater-mode-toggle-button svg {
+    width: 24px !important;
+    height: 24px !important;
+  }
+}
+
+/* 超大画面 */
+@media (min-width: 1920px) {
+  .theater-mode-toggle-button {
+    width: 52px !important;
+    height: 52px !important;
+    padding: 14px !important;
+  }
+  
+  .theater-mode-toggle-button svg {
+    width: 26px !important;
+    height: 26px !important;
+  }
+}
+
+/* YouTube の特定レイアウトに対する調整 */
+.ytp-chrome-controls .theater-mode-toggle-button {
+  flex-shrink: 0 !important;
+  order: 8 !important; /* 設定ボタンの前、フルスクリーンボタンの前に配置 */
+  margin-right: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* 右側コントロール内での配置調整 */
+.ytp-right-controls .theater-mode-toggle-button {
+  flex: none !important;
+  margin: 0 !important;
+}
+
+/* YouTube の既存ボタンとの間隔調整 */
+.ytp-settings-button + .theater-mode-toggle-button,
+.ytp-subtitles-button + .theater-mode-toggle-button,
+.ytp-size-button + .theater-mode-toggle-button {
+  margin-left: 0 !important;
+}
+
+.theater-mode-toggle-button + .ytp-fullscreen-button,
+.theater-mode-toggle-button + .ytp-settings-button,
+.theater-mode-toggle-button + .ytp-size-button {
+  margin-left: 0 !important;
+}
+
+/* YouTube の既存スタイルとの調和 */
+.ytp-chrome-controls .theater-mode-toggle-button {
+  font-size: 14px !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+}
+
+/* YouTube のボタンコンテナとの統合 */
+.ytp-right-controls {
+  align-items: center !important;
+}
+
+.ytp-right-controls .theater-mode-toggle-button {
+  align-self: center !important;
+}
+
+/* YouTube の標準ボタンスタイルとの完全な調和 */
+.theater-mode-toggle-button.ytp-button {
+  background: transparent !important;
+  border: none !important;
+  color: inherit !important;
+  cursor: pointer !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  vertical-align: middle !important;
+  white-space: nowrap !important;
+  text-decoration: none !important;
+  outline: none !important;
+}
+
+/* YouTube プレーヤーの状態に応じた調整 */
+.ytp-fullscreen .theater-mode-toggle-button {
+  width: 48px !important;
+  height: 48px !important;
+}
+
+.ytp-autohide .theater-mode-toggle-button {
+  opacity: 0 !important;
+  transition: opacity 0.3s ease !important;
+}
+
+.ytp-autohide:hover .theater-mode-toggle-button {
+  opacity: 0.9 !important;
+}
+
+/* アクセシビリティ対応 */
+.theater-mode-toggle-button[aria-pressed="true"] {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* ハイコントラストモード対応 */
+@media (prefers-contrast: high) {
+  .theater-mode-toggle-button {
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  }
+  
+  .theater-mode-toggle-button:hover,
+  .theater-mode-toggle-button:focus {
+    border-color: rgba(255, 255, 255, 0.8) !important;
+  }
+}
+/* 追加のYou
+Tube統合スタイル */
+
+/* YouTube の新しいデザインシステムとの互換性 */
+.theater-mode-toggle-button {
+  /* Material Design 3 準拠のリップル効果 */
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.theater-mode-toggle-button::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: 0 !important;
+  height: 0 !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.3) !important;
+  
+  /* ハードウェアアクセラレーション最適化 */
+  transform: translate3d(-50%, -50%, 0) !important;
+  will-change: width, height, opacity !important;
+  backface-visibility: hidden !important;
+  
+  /* スムーズなトランジション効果 */
+  transition: width 0.3s cubic-bezier(0.165, 0.84, 0.44, 1),
+              height 0.3s cubic-bezier(0.165, 0.84, 0.44, 1),
+              opacity 0.3s cubic-bezier(0.165, 0.84, 0.44, 1) !important;
+  pointer-events: none !important;
+}
+
+.theater-mode-toggle-button:active::before {
+  width: 48px !important;
+  height: 48px !important;
+  opacity: 1 !important;
+}
+
+/* YouTube の特定バージョンとの互換性 */
+.ytp-chrome-controls[data-layer="4"] .theater-mode-toggle-button {
+  z-index: 5 !important;
+}
+
+/* YouTube Shorts での調整 */
+.shorts-player .theater-mode-toggle-button {
+  display: none !important; /* Shorts では非表示 */
+}
+
+/* YouTube Music での調整 */
+.ytmusic-player .theater-mode-toggle-button {
+  color: var(--yt-spec-text-primary, #fff) !important;
+}
+
+/* YouTube TV での調整 */
+.leanback .theater-mode-toggle-button {
+  width: 56px !important;
+  height: 56px !important;
+  padding: 16px !important;
+}
+
+.leanback .theater-mode-toggle-button svg {
+  width: 28px !important;
+  height: 28px !important;
+}
+
+/* YouTube の埋め込みプレーヤーでの調整 */
+.ytp-embed .theater-mode-toggle-button {
+  opacity: 0.7 !important;
+}
+
+.ytp-embed .theater-mode-toggle-button:hover {
+  opacity: 1 !important;
+}
+
+/* YouTube のライブストリームでの調整 */
+.ytp-live .theater-mode-toggle-button {
+  border-left: 2px solid #ff0000 !important;
+}
+
+/* YouTube Premium ユーザー向けの調整 */
+.ytp-premium .theater-mode-toggle-button.theater-mode-active {
+  background: linear-gradient(45deg, #3ea6ff, #065fd4) !important;
+}
+
+/* ダークモード・ライトモードの対応 */
+@media (prefers-color-scheme: light) {
+  .theater-mode-toggle-button {
+    color: #030303 !important;
+  }
+  
+  .theater-mode-toggle-button:hover {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+  }
+  
+  .theater-mode-toggle-button.theater-mode-active {
+    color: #065fd4 !important;
+    background-color: rgba(0, 0, 0, 0.08) !important;
+  }
+}
+
+/* 高コントラストモードでの追加調整 */
+@media (prefers-contrast: high) {
+  .theater-mode-toggle-button {
+    border: 2px solid currentColor !important;
+    background-color: rgba(0, 0, 0, 0.8) !important;
+  }
+  
+  .theater-mode-toggle-button.theater-mode-active {
+    background-color: rgba(62, 166, 255, 0.3) !important;
+  }
+}
+
+/* 動きを減らす設定への対応 */
+@media (prefers-reduced-motion: reduce) {
+  .theater-mode-toggle-button,
+  .theater-mode-toggle-button svg,
+  .theater-mode-toggle-button::before {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  .theater-mode-toggle-button:hover svg {
+    transform: none !important;
+  }
+}
+
+/* フォーカス表示の改善 */
+@media (prefers-reduced-motion: no-preference) {
+  .theater-mode-toggle-button:focus-visible {
+    animation: focus-pulse 2s infinite !important;
+  }
+}
+
+@keyframes focus-pulse {
+  0%, 100% { 
+    outline-color: rgba(62, 166, 255, 0.4) !important; 
+  }
+  50% { 
+    outline-color: rgba(62, 166, 255, 0.8) !important; 
+  }
+}
+
+/* YouTube の新しいボタンレイアウトとの互換性 */
+.ytp-chrome-controls .ytp-right-controls .theater-mode-toggle-button {
+  margin-inline-start: 0 !important;
+  margin-inline-end: 0 !important;
+}
+
+/* RTL (右から左) レイアウトのサポート */
+[dir="rtl"] .theater-mode-toggle-button {
+  transform: scaleX(-1) !important;
+}
+
+[dir="rtl"] .theater-mode-toggle-button svg {
+  transform: scaleX(-1) !important;
+}
+
+/* YouTube の実験的機能との互換性 */
+.ytp-exp-bottom-control-flexbox .theater-mode-toggle-button {
+  flex: 0 0 auto !important;
+  align-self: center !important;
+}
+
+/* YouTube のカスタムテーマとの互換性 */
+.theater-mode-toggle-button {
+  color: var(--yt-spec-icon-inactive, #fff) !important;
+}
+
+.theater-mode-toggle-button:hover {
+  color: var(--yt-spec-icon-active-other, #fff) !important;
+}
+
+.theater-mode-toggle-button.theater-mode-active {
+  color: var(--yt-spec-call-to-action, #3ea6ff) !important;
+}
+
+/* パフォーマンス最適化 */
+.theater-mode-toggle-button {
+  contain: layout style paint !important;
+  will-change: background-color, color, transform !important;
+}
+
+/* GPU アクセラレーションの強制 */
+.theater-mode-toggle-button,
+.theater-mode-toggle-button svg {
+  transform: translateZ(0) !important;
+  backface-visibility: hidden !important;
+}
+
+/* 印刷時の調整 */
+@media print {
+  .theater-mode-toggle-button {
+    display: none !important;
+  }
+}
+
+/* 最終的な統合確認用のスタイル */
+.theater-mode-toggle-button[data-test="integrated"] {
+  /* テスト用の識別子 - 実際の使用では削除 */
+  box-shadow: 0 0 0 1px rgba(0, 255, 0, 0.3) !important;
+}

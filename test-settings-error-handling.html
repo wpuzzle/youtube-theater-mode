@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Theater Mode - 設定読み込みエラー対応テスト</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      color: #c00;
+      border-bottom: 2px solid #c00;
+      padding-bottom: 10px;
+    }
+    .test-controls {
+      margin: 20px 0;
+      padding: 15px;
+      background-color: #f5f5f5;
+      border-radius: 5px;
+    }
+    .test-controls button {
+      padding: 8px 15px;
+      margin-right: 10px;
+      background-color: #c00;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .test-controls button:hover {
+      background-color: #900;
+    }
+    #test-results {
+      margin-top: 20px;
+    }
+    .test-result {
+      padding: 10px;
+      margin-bottom: 5px;
+      border-radius: 4px;
+      white-space: pre-wrap;
+    }
+    .test-pass {
+      background-color: #dfd;
+      border-left: 4px solid #0a0;
+    }
+    .test-fail {
+      background-color: #fdd;
+      border-left: 4px solid #c00;
+    }
+    .test-info {
+      background-color: #ddf;
+      border-left: 4px solid #00c;
+    }
+    pre {
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    .settings-display {
+      margin-top: 20px;
+      padding: 15px;
+      background-color: #f5f5f5;
+      border-radius: 5px;
+    }
+    .settings-display h3 {
+      margin-top: 0;
+    }
+    #current-settings {
+      font-family: monospace;
+      white-space: pre;
+    }
+  </style>
+</head>
+<body>
+  <h1>YouTube Theater Mode - 設定読み込みエラー対応テスト</h1>
+  
+  <div class="test-description">
+    <p>このテストは、YouTube Theater Mode 拡張機能の設定読み込みエラー対応機能をテストします。</p>
+    <p>テスト内容:</p>
+    <ul>
+      <li>Chrome Storage API エラー時のフォールバック処理</li>
+      <li>設定データ破損時の修復機能</li>
+      <li>読み込み失敗時のリトライ機能</li>
+      <li>全リトライ失敗時のデフォルト値使用</li>
+      <li>設定修復機能</li>
+    </ul>
+  </div>
+  
+  <div class="test-controls">
+    <button onclick="runAllTests()">全テスト実行</button>
+    <button onclick="clearResults()">結果クリア</button>
+  </div>
+  
+  <div class="test-controls">
+    <button onclick="testSuite.testStorageApiError()">Storage APIエラーテスト</button>
+    <button onclick="testSuite.testCorruptedSettings()">設定破損テスト</button>
+    <button onclick="testSuite.testRetryMechanism()">リトライ機能テスト</button>
+    <button onclick="testSuite.testAllRetriesFailed()">全リトライ失敗テスト</button>
+    <button onclick="testSuite.testSettingsRepair()">設定修復機能テスト</button>
+  </div>
+  
+  <div id="test-results"></div>
+  
+  <script src="test-settings-error-handling.js"></script>
+</body>
+</html>

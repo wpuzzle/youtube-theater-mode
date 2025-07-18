@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Theater Mode",
+  "version": "1.0.0",
+  "description": "YouTube視聴時に動画以外の画面要素を薄暗くして動画コンテンツに集中できる環境を提供します",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": ["*://*.youtube.com/*"],
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": [
+        "performance-utils.js",
+        "content.js",
+        "accessibility-improvements.js"
+      ],
+      "css": ["theater-mode.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "YouTube Theater Mode"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

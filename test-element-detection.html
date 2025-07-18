@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Theater Mode - Element Detection Tests</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-results {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-line;
+        }
+        #hidden-element { display: none; }
+        #invisible-element { visibility: hidden; }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 YouTube Theater Mode - Element Detection Tests</h1>
+        <p>このページでは要素検出機能の単体テストを実行します。</p>
+        
+        <!-- テスト用のモックYouTube要素 -->
+        <div id="masthead">Header</div>
+        <div id="movie_player">
+            <div class="html5-video-player">
+                <div class="ytp-chrome-controls">Controls</div>
+            </div>
+        </div>
+        <div id="secondary">Sidebar</div>
+        <div id="comments">Comments</div>
+        <div class="ytd-watch-metadata">Metadata</div>
+        <div id="hidden-element">Hidden</div>
+        <div id="invisible-element">Invisible</div>
+        
+        <button onclick="runTests()" style="padding: 10px 20px; font-size: 16px; margin: 20px 0;">
+            テストを実行
+        </button>
+        
+        <div id="test-results" class="test-results"></div>
+    </div>
+
+    <!-- Content Script を読み込み -->
+    <script src="content.js"></script>
+    
+    <!-- テストスクリプトを読み込み -->
+    <script src="test-element-detection.js"></script>
+    <script src="test-video-player-detection.js"></script>
+    
+    <script>
+        // テスト実行関数
+        function runTests() {
+            const resultsDiv = document.getElementById('test-results');
+            resultsDiv.innerHTML = 'テストを実行中...\n';
+            
+            // コンソール出力をキャプチャ
+            const originalLog = console.log;
+            let output = '';
+            
+            console.log = function(...args) {
+                const message = args.join(' ');
+                output += message + '\n';
+                originalLog.apply(console, args);
+            };
+            
+            try {
+                // テストを実行
+                runElementDetectionTests();
+                
+                // 結果を表示
+                setTimeout(() => {
+                    resultsDiv.innerHTML = output;
+                    console.log = originalLog; // 元に戻す
+                }, 100);
+                
+            } catch (error) {
+                resultsDiv.innerHTML = `エラーが発生しました: ${error.message}\n${output}`;
+                console.log = originalLog; // 元に戻す
+            }
+        }
+        
+        // ページ読み込み時に基本的な検証を実行
+        window.addEventListener('load', () => {
+            console.log('🔍 Basic Element Detection Verification:');
+            console.log('YouTubeSelectors defined:', typeof YouTubeSelectors !== 'undefined');
+            console.log('ElementDetector defined:', typeof ElementDetector !== 'undefined');
+            
+            if (typeof ElementDetector !== 'undefined') {
+                console.log('Video player found:', ElementDetector.findVideoPlayer() !== null);
+                console.log('Overlay targets found:', ElementDetector.findOverlayTargets().length);
+            }
+        });
+    </script>
+</body>
+</html>

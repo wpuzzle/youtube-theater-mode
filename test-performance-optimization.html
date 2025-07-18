@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Theater Mode - パフォーマンス最適化テスト</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    h1 {
+      color: #c00;
+      border-bottom: 2px solid #c00;
+      padding-bottom: 10px;
+    }
+    h2 {
+      color: #333;
+      margin-top: 30px;
+    }
+    .test-container {
+      margin: 20px 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+    }
+    .test-passed {
+      background-color: #e6ffe6;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 5px solid #4CAF50;
+    }
+    .test-failed {
+      background-color: #ffebeb;
+      padding: 10px;
+      margin: 10px 0;
+      border-left: 5px solid #f44336;
+    }
+    .test-passed h3, .test-failed h3 {
+      margin-top: 0;
+    }
+    .animation-test {
+      width: 100px;
+      height: 100px;
+      background-color: #3498db;
+      margin: 20px 0;
+      position: relative;
+    }
+    .hardware-accelerated {
+      transform: translateZ(0);
+      will-change: opacity, transform;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .non-accelerated {
+      transition: opacity 0.3s ease, left 0.3s ease;
+    }
+    .controls {
+      margin: 20px 0;
+    }
+    button {
+      padding: 8px 15px;
+      margin-right: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .performance-metrics {
+      margin-top: 20px;
+      font-family: monospace;
+      white-space: pre;
+      background-color: #f5f5f5;
+      padding: 10px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>YouTube Theater Mode - パフォーマンス最適化テスト</h1>
+  
+  <section>
+    <h2>イベントリスナー最適化テスト</h2>
+    <div class="test-container">
+      <div id="test-results"></div>
+    </div>
+  </section>
+  
+  <section>
+    <h2>CSS アニメーション最適化テスト</h2>
+    <div class="test-container">
+      <div class="controls">
+        <button id="toggle-hardware">ハードウェアアクセラレーション切り替え</button>
+        <button id="animate-opacity">透明度アニメーション</button>
+        <button id="animate-transform">変形アニメーション</button>
+      </div>
+      
+      <div class="animation-test hardware-accelerated" id="test-element"></div>
+      
+      <div class="performance-metrics" id="animation-metrics">
+        アニメーション性能メトリクスがここに表示されます...
+      </div>
+    </div>
+  </section>
+  
+  <script src="../performance-utils.js"></script>
+  <script>
+    // CSS アニメーション最適化テスト
+    document.addEventListener('DOMContentLoaded', () => {
+      const testElement = document.getElementById('test-element');
+      const metricsElement = document.getElementById('animation-metrics');
+      const toggleHardwareBtn = document.getElementById('toggle-hardware');
+      const animateOpacityBtn = document.getElementById('animate-opacity');
+      const animateTransformBtn = document.getElementById('animate-transform');
+      
+      let isHardwareAccelerated = true;
+      let animationFrames = [];
+      let startTime;
+      let isAnimating = false;
+      
+      // ハードウェアアクセラレーション切り替え
+      toggleHardwareBtn.addEventListener('click', () => {
+        isHardwareAccelerated = !isHardwareAccelerated;
+        
+        if (isHardwareAccelerated) {
+          testElement.classList.remove('non-accelerated');
+          testElement.classList.add('hardware-accelerated');
+          toggleHardwareBtn.textContent = 'ハードウェアアクセラレーションOFF';
+        } else {
+          testElement.classList.remove('hardware-accelerated');
+          testElement.classList.add('non-accelerated');
+          toggleHardwareBtn.textContent = 'ハードウェアアクセラレーションON';
+        }
+        
+        updateMetrics(`モード: ${isHardwareAccelerated ? 'ハードウェアアクセラレーション有効' : 'ハードウェアアクセラレーション無効'}`);
+      });
+      
+      // 透明度アニメーション
+      animateOpacityBtn.addEventListener('click', () => {
+        if (isAnimating) return;
+        
+        startAnimation();
+        testElement.style.opacity = '0.3';
+        
+        setTimeout(() => {
+          testElement.style.opacity = '1';
+          setTimeout(() => stopAnimation('透明度アニメーション'), 300);
+        }, 300);
+      });
+      
+      // 変形アニメーション
+      animateTransformBtn.addEventListener('click', () => {
+        if (isAnimating) return;
+        
+        startAnimation();
+        testElement.style.transform = 'scale(0.8)';
+        
+        setTimeout(() => {
+          testElement.style.transform = 'scale(1)';
+          setTimeout(() => stopAnimation('変形アニメーション'), 300);
+        }, 300);
+      });
+      
+      // アニメーションフレームの記録開始
+      function startAnimation() {
+        isAnimating = true;
+        animationFrames = [];
+        startTime = performance.now();
+        
+        requestAnimationFrame(recordFrame);
+        updateMetrics('アニメーション実行中...');
+      }
+      
+      // フレームを記録
+      function recordFrame(timestamp) {
+        if (!isAnimating) return;
+        
+        animationFrames.push({
+          timestamp,
+          delta: animationFrames.length > 0 ? 
+            timestamp - animationFrames[animationFrames.length - 1].timestamp : 0
+        });
+        
+        requestAnimationFrame(recordFrame);
+      }
+      
+      // アニメーション記録停止と分析
+      function stopAnimation(animationType) {
+        isAnimating = false;
+        const endTime = performance.now();
+        const duration = endTime - startTime;
+        
+        // 性能メトリクスを計算
+        const frameCount = animationFrames.length;
+        const fps = frameCount / (duration / 1000);
+        
+        let totalDelta = 0;
+        let maxDelta = 0;
+        let droppedFrames = 0;
+        
+        for (let i = 1; i < animationFrames.length; i++) {
+          const delta = animationFrames[i].timestamp - animationFrames[i-1].timestamp;
+          totalDelta += delta;
+          maxDelta = Math.max(maxDelta, delta);
+          
+          // 16.7msを超えるフレーム間隔はドロップフレームとみなす
+          if (delta > 16.7) {
+            droppedFrames++;
+          }
+        }
+        
+        const avgDelta = totalDelta / (frameCount - 1);
+        
+        // メトリクスを表示
+        updateMetrics(
+          `${animationType} 結果:\n` +
+          `モード: ${isHardwareAccelerated ? 'ハードウェアアクセラレーション有効' : 'ハードウェアアクセラレーション無効'}\n` +
+          `持続時間: ${duration.toFixed(2)}ms\n` +
+          `フレーム数: ${frameCount}\n` +
+          `FPS: ${fps.toFixed(2)}\n` +
+          `平均フレーム間隔: ${avgDelta.toFixed(2)}ms\n` +
+          `最大フレーム間隔: ${maxDelta.toFixed(2)}ms\n` +
+          `ドロップフレーム数: ${droppedFrames}`
+        );
+      }
+      
+      // メトリクス表示を更新
+      function updateMetrics(text) {
+        metricsElement.textContent = text;
+      }
+      
+      // 初期状態を設定
+      updateMetrics('アニメーションボタンをクリックしてテストを開始');
+    });
+  </script>
+  <script src="../run-performance-tests.js"></script>
+</body>
+</html>

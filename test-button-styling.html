@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theater Mode Button Styling Test</title>
+    <link rel="stylesheet" href="theater-mode.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #0f0f0f;
+            color: white;
+            font-family: "YouTube Sans", "Roboto", sans-serif;
+        }
+        
+        .test-container {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #3ea6ff;
+        }
+        
+        /* YouTube プレーヤーコントロールのモック */
+        .ytp-chrome-controls {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 8px 12px;
+            height: 48px;
+            box-sizing: border-box;
+        }
+        
+        .ytp-right-controls {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .ytp-button {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 8px;
+            width: 48px;
+            height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .ytp-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .mock-button {
+            opacity: 0.9;
+        }
+        
+        .size-test {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .size-variant {
+            text-align: center;
+        }
+        
+        .size-label {
+            font-size: 12px;
+            margin-bottom: 8px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <h1>YouTube Theater Mode - Button Styling Test</h1>
+    
+    <div class="test-container">
+        <div class="test-title">1. 基本的なボタンスタイル</div>
+        <div class="ytp-chrome-controls">
+            <div class="ytp-right-controls">
+                <button class="ytp-button mock-button">⚙️</button>
+                <button class="theater-mode-toggle-button" title="シアターモード切り替え">
+                    <svg height="100%" version="1.1" viewBox="0 0 24 24" width="100%">
+                        <path fill="currentColor" d="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19Z"/>
+                        <path fill="currentColor" d="M7,7V17H17V7H7M15,15H9V9H15V15Z"/>
+                    </svg>
+                </button>
+                <button class="ytp-button mock-button">⛶</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <div class="test-title">2. アクティブ状態のボタン</div>
+        <div class="ytp-chrome-controls">
+            <div class="ytp-right-controls">
+                <button class="ytp-button mock-button">⚙️</button>
+                <button class="theater-mode-toggle-button theater-mode-active" title="シアターモードを無効にする">
+                    <svg height="100%" version="1.1" viewBox="0 0 24 24" width="100%">
+                        <path fill="currentColor" d="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19Z"/>
+                        <path fill="currentColor" d="M7,7V17H17V7H7M15,15H9V9H15V15Z"/>
+                        <circle fill="currentColor" cx="12" cy="12" r="2"/>
+                    </svg>
+                </button>
+                <button class="ytp-button mock-button">⛶</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <div class="test-title">3. レスポンシブサイズテスト</div>
+        <div class="size-test">
+            <div class="size-variant">
+                <div class="size-label">デスクトップ (48px)</div>
+                <button class="theater-mode-toggle-button" style="width: 48px !important; height: 48px !important;">
+                    <svg height="100%" version="1.1" viewBox="0 0 24 24" width="100%" style="width: 24px !important; height: 24px !important;">
+                        <path fill="currentColor" d="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19Z"/>
+                        <path fill="currentColor" d="M7,7V17H17V7H7M15,15H9V9H15V15Z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="size-variant">
+                <div class="size-label">タブレット (40px)</div>
+                <button class="theater-mode-toggle-button" style="width: 40px !important; height: 40px !important;">
+                    <svg height="100%" version="1.1" viewBox="0 0 24 24" width="100%" style="width: 20px !important; height: 20px !important;">
+                        <path fill="currentColor" d="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19Z"/>
+                        <path fill="currentColor" d="M7,7V17H17V7H7M15,15H9V9H15V15Z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="size-variant">
+                <div class="size-label">スマートフォン (32px)</div>
+                <button class="theater-mode-toggle-button" style="width: 32px !important; height: 32px !important;">
+                    <svg height="100%" version="1.1" viewBox="0 0 24 24" width="100%" style="width: 16px !important; height: 16px !important;">
+                        <path fill="currentColor" d="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19Z"/>
+                        <path fill="currentColor" d="M7,7V17H17V7H7M15,15H9V9H15V15Z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <div class="test-title">4. ホバー・フォーカス状態テスト</div>
+        <p style="font-size: 14px; color: #aaa; margin-bottom: 15px;">
+            ボタンにマウスを乗せたり、Tabキーでフォーカスしてスタイルの変化を確認してください。
+        </p>
+        <div class="ytp-chrome-controls">
+            <div class="ytp-right-controls">
+                <button class="theater-mode-toggle-button" title="ホバー・フォーカステスト">
+                    <svg height="100%" version="1.1" viewBox="0 0 24 24" width="100%">
+                        <path fill="currentColor" d="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19Z"/>
+                        <path fill="currentColor" d="M7,7V17H17V7H7M15,15H9V9H15V15Z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <div class="test-title">5. アクセシビリティテスト</div>
+        <div class="ytp-chrome-controls">
+            <div class="ytp-right-controls">
+                <button class="theater-mode-toggle-button" 
+                        aria-label="シアターモード切り替え" 
+                        aria-pressed="false"
+                        title="シアターモード切り替え">
+                    <svg height="100%" version="1.1" viewBox="0 0 24 24" width="100%">
+                        <path fill="currentColor" d="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19Z"/>
+                        <path fill="currentColor" d="M7,7V17H17V7H7M15,15H9V9H15V15Z"/>
+                    </svg>
+                </button>
+                <button class="theater-mode-toggle-button theater-mode-active" 
+                        aria-label="シアターモードを無効にする" 
+                        aria-pressed="true"
+                        title="シアターモードを無効にする">
+                    <svg height="100%" version="1.1" viewBox="0 0 24 24" width="100%">
+                        <path fill="currentColor" d="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19Z"/>
+                        <path fill="currentColor" d="M7,7V17H17V7H7M15,15H9V9H15V15Z"/>
+                        <circle fill="currentColor" cx="12" cy="12" r="2"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 簡単なインタラクションテスト
+        document.querySelectorAll('.theater-mode-toggle-button').forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('theater-mode-active');
+                const isActive = this.classList.contains('theater-mode-active');
+                this.setAttribute('aria-pressed', isActive.toString());
+                
+                // アイコンを更新
+                const svg = this.querySelector('svg');
+                if (isActive) {
+                    // アクティブ状態のアイコンに変更
+                    if (!svg.querySelector('circle')) {
+                        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                        circle.setAttribute('fill', 'currentColor');
+                        circle.setAttribute('cx', '12');
+                        circle.setAttribute('cy', '12');
+                        circle.setAttribute('r', '2');
+                        svg.appendChild(circle);
+                    }
+                    this.setAttribute('title', 'シアターモードを無効にする');
+                    this.setAttribute('aria-label', 'シアターモードを無効にする');
+                } else {
+                    // 非アクティブ状態のアイコンに変更
+                    const circle = svg.querySelector('circle');
+                    if (circle) {
+                        circle.remove();
+                    }
+                    this.setAttribute('title', 'シアターモード切り替え');
+                    this.setAttribute('aria-label', 'シアターモード切り替え');
+                }
+            });
+        });
+        
+        // レスポンシブテスト用の画面サイズ表示
+        function updateScreenSize() {
+            const width = window.innerWidth;
+            let sizeCategory = '';
+            
+            if (width >= 1920) sizeCategory = '超大画面';
+            else if (width >= 1440) sizeCategory = '大画面';
+            else if (width >= 1024) sizeCategory = 'デスクトップ';
+            else if (width >= 768) sizeCategory = 'タブレット';
+            else if (width >= 480) sizeCategory = 'スマートフォン';
+            else if (width >= 360) sizeCategory = '小さなスマートフォン';
+            else sizeCategory = '非常に小さなスマートフォン';
+            
+            document.title = `Theater Mode Button Test - ${sizeCategory} (${width}px)`;
+        }
+        
+        updateScreenSize();
+        window.addEventListener('resize', updateScreenSize);
+        
+        console.log('Theater Mode Button Styling Test loaded');
+        console.log('Current screen width:', window.innerWidth);
+    </script>
+</body>
+</html>

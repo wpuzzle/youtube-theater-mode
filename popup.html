@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Theater Mode</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <h1>YouTube Theater Mode</h1>
+    
+    <div class="control-section">
+      <label class="toggle-switch">
+        <input type="checkbox" id="theaterModeToggle">
+        <span class="slider"></span>
+        <span class="label-text">シアターモード</span>
+      </label>
+      <div id="statusIndicator" class="status-indicator">
+        <span id="statusText">無効</span>
+      </div>
+    </div>
+    
+    <div class="settings-section">
+      <h3>設定</h3>
+      
+      <div class="setting-item">
+        <label for="opacitySlider">背景の透明度:</label>
+        <div class="opacity-control">
+          <input type="range" id="opacitySlider" min="0" max="0.9" step="0.05" value="0.7">
+          <span id="opacityValue">70%</span>
+          <button id="resetOpacityBtn" class="reset-button" title="デフォルト透明度に戻す">リセット</button>
+        </div>
+        <div class="opacity-preview" id="opacityPreview">
+          <div class="preview-container">
+            <div class="preview-video"></div>
+            <div class="preview-overlay" id="previewOverlay"></div>
+          </div>
+        </div>
+        <div id="opacityFeedback" class="feedback-message"></div>
+      </div>
+      
+      <div class="setting-item">
+        <label for="shortcutKey">キーボードショートカット:</label>
+        <select id="shortcutKey">
+          <option value="t">T</option>
+          <option value="f">F</option>
+          <option value="space">スペース</option>
+        </select>
+        <div class="shortcut-hint">Ctrl+Shift+<span id="shortcutKeyDisplay">T</span></div>
+      </div>
+    </div>
+    
+    <div class="info-section">
+      <p class="info-text">YouTubeの動画視聴時に背景を暗くして集中できる環境を提供します。</p>
+      <div class="connection-status">
+        <span id="connectionStatus" class="connected">接続済み</span>
+      </div>
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

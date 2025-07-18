@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- 背景円 -->
+  <circle cx="64" cy="64" r="60" fill="#FF0000" />
+  
+  <!-- 中央の再生ボタン形状 -->
+  <polygon points="48,40 88,64 48,88" fill="white" />
+  
+  <!-- シアターモードを表す暗い半透明オーバーレイ -->
+  <rect x="10" y="10" width="108" height="108" fill="black" fill-opacity="0.3" rx="54" ry="54" />
+  
+  <!-- 中央の明るい部分（動画エリア） -->
+  <rect x="32" y="32" width="64" height="64" fill="white" fill-opacity="0.2" rx="5" ry="5" />
+</svg>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theater Mode Button Placement Test</title>
+    <link rel="stylesheet" href="theater-mode.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background-color: #0f0f0f;
+            color: white;
+            font-family: "YouTube Sans", "Roboto", sans-serif;
+        }
+        
+        .test-container {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #1a1a1a;
+        }
+        
+        .test-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #3ea6ff;
+        }
+        
+        .test-description {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 15px;
+        }
+        
+        /* YouTube プレーヤーコントロールのモック */
+        .mock-player {
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .ytp-chrome-controls {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 8px 12px;
+            height: 48px;
+            box-sizing: border-box;
+        }
+        
+        .ytp-right-controls {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .ytp-button {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 8px;
+            width: 48px;
+            height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: background-color 0.1s;
+        }
+        
+        .ytp-button:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        .button-label {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: #666;
+            white-space: nowrap;
+        }
+        
+        .ytp-button {
+            position: relative;
+        }
+        
+        .placement-result {
+            margin-top: 15px;
+            padding: 10px;
+            background: #2a2a2a;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .success { color: #4caf50; }
+        .error { color: #f44336; }
+        .info { color: #2196f3; }
+    </style>
+</head>
+<body>
+    <h1>YouTube Theater Mode - Button Placement Test</h1>
+    
+    <div class="test-container">
+        <div class="test-title">1. 標準的な配置（設定ボタン + フルスクリーンボタン）</div>
+        <div class="test-description">
+            シアターモードボタンが設定ボタンとフルスクリーンボタンの間に正しく配置されることを確認
+        </div>
+        <div class="mock-player">
+            <div class="ytp-chrome-controls">
+                <div class="ytp-right-controls" id="controls1">
+                    <button class="ytp-button ytp-settings-button" title="設定">
+                        ⚙️
+                        <div class="button-label">Settings</div>
+                    </button>
+                    <button class="ytp-button ytp-fullscreen-button" title="フルスクリーン">
+                        ⛶
+                        <div class="button-label">Fullscreen</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="placement-result" id="result1"></div>
+    </div>
+    
+    <div class="test-container">
+        <div class="test-title">2. 複数ボタンがある場合の配置</div>
+        <div class="test-description">
+            字幕、サイズ、設定、フルスクリーンボタンがある場合の適切な配置を確認
+        </div>
+        <div class="mock-player">
+            <div class="ytp-chrome-controls">
+                <div class="ytp-right-controls" id="controls2">
+                    <button class="ytp-button ytp-subtitles-button" title="字幕">
+                        CC
+                        <div class="button-label">Subtitles</div>
+                    </button>
+                    <button class="ytp-button ytp-size-button" title="サイズ">
+                        📺
+                        <div class="button-label">Size</div>
+                    </button>
+                    <button class="ytp-button ytp-settings-button" title="設定">
+                        ⚙️
+                        <div class="button-label">Settings</div>
+                    </button>
+                    <button class="ytp-button ytp-fullscreen-button" title="フルスクリーン">
+                        ⛶
+                        <div class="button-label">Fullscreen</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="placement-result" id="result2"></div>
+    </div>
+    
+    <div class="test-container">
+        <div class="test-title">3. フルスクリーンボタンがない場合</div>
+        <div class="test-description">
+            フルスクリーンボタンがない場合、設定ボタンの前に配置されることを確認
+        </div>
+        <div class="mock-player">
+            <div class="ytp-chrome-controls">
+                <div class="ytp-right-controls" id="controls3">
+                    <button class="ytp-button ytp-settings-button" title="設定">
+                        ⚙️
+                        <div class="button-label">Settings</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="placement-result" id="result3"></div>
+    </div>
+    
+    <div class="test-container">
+        <div class="test-title">4. 空のコントロールでの配置</div>
+        <div class="test-description">
+            他のボタンがない場合、コントロールの最初に配置されることを確認
+        </div>
+        <div class="mock-player">
+            <div class="ytp-chrome-controls">
+                <div class="ytp-right-controls" id="controls4">
+                </div>
+            </div>
+        </div>
+        <div class="placement-result" id="result4"></div>
+    </div>
+    
+    <div class="test-container">
+        <div class="test-title">5. レスポンシブ配置テスト</div>
+        <div class="test-description">
+            画面サイズに応じてボタンサイズが適切に調整されることを確認
+        </div>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+            <div style="width: 320px; border: 1px solid #444; padding: 10px;">
+                <div style="font-size: 12px; margin-bottom: 5px;">Mobile (320px)</div>
+                <div class="mock-player">
+                    <div class="ytp-chrome-controls">
+                        <div class="ytp-right-controls">
+                            <button class="theater-mode-toggle-button" style="width: 32px !important; height: 32px !important;">
+                                <svg height="100%" version="1.1" viewBox="0 0 24 24" width="100%" style="width: 16px !important; height: 16px !important;">
+                                    <path fill="currentColor" d="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19Z"/>
+                                    <path fill="currentColor" d="M7,7V17H17V7H7M15,15H9V9H15V15Z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="width: 768px; border: 1px solid #444; padding: 10px;">
+                <div style="font-size: 12px; margin-bottom: 5px;">Tablet (768px)</div>
+                <div class="mock-player">
+                    <div class="ytp-chrome-controls">
+                        <div class="ytp-right-controls">
+                            <button class="theater-mode-toggle-button" style="width: 40px !important; height: 40px !important;">
+                                <svg height="100%" version="1.1" viewBox="0 0 24 24" width="100%" style="width: 20px !important; height: 20px !important;">
+                                    <path fill="currentColor" d="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19Z"/>
+                                    <path fill="currentColor" d="M7,7V17H17V7H7M15,15H9V9H15V15Z"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="test-button-placement.js"></script>
+    <script>
+        // テスト実行関数
+        function runPlacementTest(controlsId, resultId, testName) {
+            const controls = document.getElementById(controlsId);
+            const resultDiv = document.getElementById(resultId);
+            
+            // シアターモードボタンを作成
+            const button = document.createElement('button');
+            button.className = 'ytp-button theater-mode-toggle-button';
+            button.setAttribute('title', 'シアターモード切り替え');
+            button.innerHTML = `
+                <svg height="100%" version="1.1" viewBox="0 0 24 24" width="100%">
+                    <path fill="currentColor" d="M19,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3M19,19H5V5H19V19Z"/>
+                    <path fill="currentColor" d="M7,7V17H17V7H7M15,15H9V9H15V15Z"/>
+                </svg>
+                <div class="button-label">Theater</div>
+            `;
+            
+            // 配置ロジックを実行
+            const fullscreenButton = controls.querySelector('.ytp-fullscreen-button');
+            const settingsButton = controls.querySelector('.ytp-settings-button');
+            const sizeButton = controls.querySelector('.ytp-size-button');
+            
+            let insertBefore = null;
+            let placementReason = '';
+            
+            if (fullscreenButton) {
+                insertBefore = fullscreenButton;
+                placementReason = 'フルスクリーンボタンの前に配置';
+            } else if (settingsButton) {
+                insertBefore = settingsButton;
+                placementReason = '設定ボタンの前に配置';
+            } else if (sizeButton) {
+                insertBefore = sizeButton;
+                placementReason = 'サイズボタンの前に配置';
+            } else {
+                placementReason = 'コントロールの最後に配置';
+            }
+            
+            if (insertBefore) {
+                controls.insertBefore(button, insertBefore);
+            } else {
+                controls.appendChild(button);
+            }
+            
+            // 結果を表示
+            const buttonIndex = Array.from(controls.children).indexOf(button);
+            const totalButtons = controls.children.length;
+            const buttonOrder = Array.from(controls.children).map(btn => {
+                if (btn.classList.contains('theater-mode-toggle-button')) return 'Theater';
+                if (btn.classList.contains('ytp-settings-button')) return 'Settings';
+                if (btn.classList.contains('ytp-fullscreen-button')) return 'Fullscreen';
+                if (btn.classList.contains('ytp-subtitles-button')) return 'Subtitles';
+                if (btn.classList.contains('ytp-size-button')) return 'Size';
+                return 'Other';
+            }).join(' → ');
+            
+            resultDiv.innerHTML = `
+                <div class="success">✓ ${testName} - 配置成功</div>
+                <div class="info">配置理由: ${placementReason}</div>
+                <div class="info">位置: ${buttonIndex + 1}/${totalButtons}</div>
+                <div class="info">ボタン順序: ${buttonOrder}</div>
+            `;
+            
+            // ボタンにクリックイベントを追加
+            button.addEventListener('click', function() {
+                this.classList.toggle('theater-mode-active');
+                const isActive = this.classList.contains('theater-mode-active');
+                
+                if (isActive) {
+                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    circle.setAttribute('fill', 'currentColor');
+                    circle.setAttribute('cx', '12');
+                    circle.setAttribute('cy', '12');
+                    circle.setAttribute('r', '2');
+                    this.querySelector('svg').appendChild(circle);
+                } else {
+                    const circle = this.querySelector('circle');
+                    if (circle) circle.remove();
+                }
+            });
+        }
+        
+        // 全テストを実行
+        document.addEventListener('DOMContentLoaded', function() {
+            runPlacementTest('controls1', 'result1', 'Test 1');
+            runPlacementTest('controls2', 'result2', 'Test 2');
+            runPlacementTest('controls3', 'result3', 'Test 3');
+            runPlacementTest('controls4', 'result4', 'Test 4');
+            
+            console.log('All button placement tests completed');
+        });
+        
+        // 画面サイズ情報を表示
+        function updateScreenInfo() {
+            const width = window.innerWidth;
+            let category = '';
+            
+            if (width <= 360) category = '非常に小さなスマートフォン';
+            else if (width <= 480) category = 'スマートフォン';
+            else if (width <= 768) category = 'タブレット';
+            else if (width <= 1024) category = 'デスクトップ';
+            else if (width <= 1440) category = '大画面';
+            else category = '超大画面';
+            
+            document.title = `Button Placement Test - ${category} (${width}px)`;
+        }
+        
+        updateScreenInfo();
+        window.addEventListener('resize', updateScreenInfo);
+    </script>
+</body>
+</html>

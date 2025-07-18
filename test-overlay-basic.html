@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theater Mode Overlay Test</title>
+    <link rel="stylesheet" href="theater-mode.css">
+    <style>
+        /* YouTube風のテストレイアウト */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #0f0f0f;
+            color: white;
+        }
+        
+        #masthead {
+            background-color: #212121;
+            height: 56px;
+            padding: 0 16px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .main-content {
+            display: flex;
+            max-width: 1280px;
+            margin: 24px auto;
+            gap: 24px;
+        }
+        
+        .primary {
+            flex: 1;
+        }
+        
+        #movie_player {
+            width: 100%;
+            height: 480px;
+            background-color: #000;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ff0000;
+        }
+        
+        #secondary {
+            width: 402px;
+            background-color: #272727;
+            padding: 16px;
+            border-radius: 8px;
+        }
+        
+        #meta-contents {
+            margin-top: 16px;
+            padding: 16px;
+            background-color: #272727;
+            border-radius: 8px;
+        }
+        
+        #comments {
+            margin-top: 16px;
+            padding: 16px;
+            background-color: #272727;
+            border-radius: 8px;
+        }
+        
+        .test-controls {
+            position: fixed;
+            top: 70px;
+            right: 20px;
+            background-color: #333;
+            padding: 16px;
+            border-radius: 8px;
+            z-index: 10000;
+        }
+        
+        button {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #cc0000;
+        }
+        
+        .opacity-control {
+            margin-top: 12px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            margin-top: 8px;
+        }
+        
+        .status {
+            margin-top: 12px;
+            padding: 8px;
+            background-color: #444;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <!-- YouTube風ヘッダー -->
+    <div id="masthead">
+        <h1>YouTube Theater Mode Test</h1>
+    </div>
+    
+    <div class="main-content">
+        <!-- メインコンテンツ -->
+        <div class="primary">
+            <!-- 動画プレーヤー（保護対象） -->
+            <div id="movie_player">
+                <div style="color: white; text-align: center;">
+                    <h2>動画プレーヤー</h2>
+                    <p>この領域はオーバーレイから保護されます</p>
+                </div>
+            </div>
+            
+            <!-- 動画メタデータ -->
+            <div id="meta-contents">
+                <h3>動画タイトル</h3>
+                <p>動画の説明文がここに表示されます。</p>
+            </div>
+            
+            <!-- コメント欄 -->
+            <div id="comments">
+                <h3>コメント</h3>
+                <p>コメント1: とても良い動画ですね！</p>
+                <p>コメント2: 参考になりました。</p>
+                <p>コメント3: ありがとうございます。</p>
+            </div>
+        </div>
+        
+        <!-- サイドバー -->
+        <div id="secondary">
+            <h3>関連動画</h3>
+            <div style="margin-bottom: 12px; padding: 8px; background-color: #333; border-radius: 4px;">
+                関連動画1
+            </div>
+            <div style="margin-bottom: 12px; padding: 8px; background-color: #333; border-radius: 4px;">
+                関連動画2
+            </div>
+            <div style="margin-bottom: 12px; padding: 8px; background-color: #333; border-radius: 4px;">
+                関連動画3
+            </div>
+        </div>
+    </div>
+    
+    <!-- テスト用コントロール -->
+    <div class="test-controls">
+        <h4>Theater Mode Test</h4>
+        <button id="toggleBtn">シアターモード切り替え</button>
+        <button id="enableBtn">有効化</button>
+        <button id="disableBtn">無効化</button>
+        
+        <div class="opacity-control">
+            <label for="opacitySlider">透明度: <span id="opacityValue">70%</span></label>
+            <input type="range" id="opacitySlider" min="0" max="90" value="70">
+        </div>
+        
+        <div class="status">
+            <div>状態: <span id="statusText">無効</span></div>
+            <div>オーバーレイ要素: <span id="overlayStatus">なし</span></div>
+        </div>
+    </div>
+
+    <script>
+        // TheaterModeControllerクラスの簡易版（テスト用）
+        class TheaterModeController {
+            constructor() {
+                this.isTheaterModeActive = false;
+                this.overlayElement = null;
+                this.currentOpacity = 0.7;
+                console.log("Theater Mode Controller initialized");
+            }
+
+            toggleTheaterMode() {
+                if (this.isTheaterModeActive) {
+                    this.disableTheaterMode();
+                } else {
+                    this.enableTheaterMode();
+                }
+                this.updateStatus();
+            }
+
+            enableTheaterMode() {
+                if (this.isTheaterModeActive) {
+                    console.log("Already active");
+                    return;
+                }
+
+                console.log("Enabling theater mode");
+                this.applyOverlay();
+                this.isTheaterModeActive = true;
+                document.body.classList.add("theater-mode-active");
+            }
+
+            disableTheaterMode() {
+                if (!this.isTheaterModeActive) {
+                    console.log("Already inactive");
+                    return;
+                }
+
+                console.log("Disabling theater mode");
+                this.removeOverlay();
+                this.isTheaterModeActive = false;
+                document.body.classList.remove("theater-mode-active");
+            }
+
+            updateOpacity(opacity) {
+                this.currentOpacity = Math.max(0, Math.min(0.9, opacity));
+                
+                if (this.overlayElement) {
+                    this.overlayElement.style.backgroundColor = `rgba(0, 0, 0, ${this.currentOpacity})`;
+                    console.log(`Opacity updated to ${this.currentOpacity * 100}%`);
+                }
+            }
+
+            applyOverlay() {
+                this.removeOverlay();
+
+                try {
+                    // オーバーレイ要素を作成
+                    this.overlayElement = document.createElement("div");
+                    this.overlayElement.className = "theater-mode-overlay theater-mode-fade-in";
+                    this.overlayElement.style.backgroundColor = `rgba(0, 0, 0, ${this.currentOpacity})`;
+
+                    // オーバーレイをページに追加
+                    document.body.appendChild(this.overlayElement);
+
+                    // 動画プレーヤーを保護
+                    const videoPlayer = document.querySelector("#movie_player");
+                    if (videoPlayer) {
+                        videoPlayer.classList.add("theater-mode-video-area");
+                        console.log("Video player protected");
+                    }
+
+                    console.log("Overlay applied successfully");
+                } catch (error) {
+                    console.error("Error applying overlay:", error);
+                    this.removeOverlay();
+                }
+            }
+
+            removeOverlay() {
+                try {
+                    if (this.overlayElement) {
+                        this.overlayElement.classList.remove("theater-mode-fade-in");
+                        this.overlayElement.classList.add("theater-mode-fade-out");
+
+                        setTimeout(() => {
+                            if (this.overlayElement && this.overlayElement.parentNode) {
+                                this.overlayElement.parentNode.removeChild(this.overlayElement);
+                            }
+                            this.overlayElement = null;
+                            this.updateStatus();
+                        }, 300);
+                    }
+
+                    // 動画プレーヤーの保護クラスを削除
+                    const videoPlayer = document.querySelector("#movie_player");
+                    if (videoPlayer) {
+                        videoPlayer.classList.remove("theater-mode-video-area");
+                        console.log("Video player protection removed");
+                    }
+
+                    console.log("Overlay removed successfully");
+                } catch (error) {
+                    console.error("Error removing overlay:", error);
+                    if (this.overlayElement && this.overlayElement.parentNode) {
+                        this.overlayElement.parentNode.removeChild(this.overlayElement);
+                    }
+                    this.overlayElement = null;
+                }
+            }
+
+            updateStatus() {
+                document.getElementById('statusText').textContent = 
+                    this.isTheaterModeActive ? '有効' : '無効';
+                document.getElementById('overlayStatus').textContent = 
+                    this.overlayElement ? 'あり' : 'なし';
+            }
+        }
+
+        // テスト用初期化
+        const controller = new TheaterModeController();
+
+        // イベントリスナー設定
+        document.getElementById('toggleBtn').addEventListener('click', () => {
+            controller.toggleTheaterMode();
+        });
+
+        document.getElementById('enableBtn').addEventListener('click', () => {
+            controller.enableTheaterMode();
+            controller.updateStatus();
+        });
+
+        document.getElementById('disableBtn').addEventListener('click', () => {
+            controller.disableTheaterMode();
+            controller.updateStatus();
+        });
+
+        document.getElementById('opacitySlider').addEventListener('input', (e) => {
+            const opacity = e.target.value / 100;
+            controller.updateOpacity(opacity);
+            document.getElementById('opacityValue').textContent = e.target.value + '%';
+        });
+
+        // 初期状態表示
+        controller.updateStatus();
+    </script>
+</body>
+</html>

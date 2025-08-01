@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PerformanceMonitor Tests</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+
+      .container {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #333;
+        border-bottom: 2px solid #007cba;
+        padding-bottom: 10px;
+      }
+
+      .test-section {
+        margin: 20px 0;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #fafafa;
+      }
+
+      .controls {
+        margin: 20px 0;
+      }
+
+      button {
+        background-color: #007cba;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin: 5px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+      }
+
+      button:hover {
+        background-color: #005a87;
+      }
+
+      button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+
+      .metrics {
+        background-color: #f0f8ff;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 10px 0;
+      }
+
+      .metrics h3 {
+        margin-top: 0;
+        color: #007cba;
+      }
+
+      .metric-item {
+        margin: 5px 0;
+        font-family: monospace;
+      }
+
+      .alert {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+      }
+
+      .alert.error {
+        background-color: #f8d7da;
+        border-color: #f5c6cb;
+        color: #721c24;
+      }
+
+      .log-output {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        padding: 15px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 12px;
+        max-height: 300px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+      }
+
+      .status {
+        padding: 5px 10px;
+        border-radius: 3px;
+        font-weight: bold;
+        display: inline-block;
+        margin: 5px 0;
+      }
+
+      .status.monitoring {
+        background-color: #d4edda;
+        color: #155724;
+      }
+
+      .status.stopped {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>PerformanceMonitor Tests</h1>
+
+      <div class="test-section">
+        <h2>自動テスト実行</h2>
+        <div class="controls">
+          <button onclick="runAutomatedTests()">全テスト実行</button>
+          <button onclick="clearTestOutput()">出力クリア</button>
+        </div>
+        <div id="test-output" class="log-output"></div>
+      </div>
+
+      <div class="test-section">
+        <h2>手動テスト - パフォーマンス監視</h2>
+        <div class="controls">
+          <button id="start-btn" onclick="startMonitoring()">監視開始</button>
+          <button id="stop-btn" onclick="stopMonitoring()" disabled>
+            監視停止
+          </button>
+          <button onclick="generateLoad()">負荷生成</button>
+          <button onclick="clearMetrics()">メトリクスクリア</button>
+        </div>
+
+        <div id="monitoring-status" class="status stopped">監視停止中</div>
+
+        <div id="metrics-display" class="metrics">
+          <h3>現在のメトリクス</h3>
+          <div id="metrics-content">監視を開始してください</div>
+        </div>
+
+        <div id="alerts-display"></div>
+      </div>
+
+      <div class="test-section">
+        <h2>パフォーマンス測定テスト</h2>
+        <div class="controls">
+          <button onclick="testPerformanceMeasurement()">測定テスト実行</button>
+        </div>
+        <div id="measurement-output" class="log-output"></div>
+      </div>
+    </div>
+
+    <!-- PerformanceMonitor を読み込み -->
+    <script src="../infrastructure/performance-monitor.js"></script>
+    <script src="test-performance-monitor.js"></script>
+
+    <script>
+      let performanceMonitor = null;
+      let metricsUpdateInterval = null;
+
+      // テスト出力用の関数
+      function logToOutput(elementId, message) {
+        const output = document.getElementById(elementId);
+        output.textContent += message + "\n";
+        output.scrollTop = output.scrollHeight;
+      }
+
+      function clearTestOutput() {
+        document.getElementById("test-output").textContent = "";
+      }
+
+      // 自動テスト実行
+      async function runAutomatedTests() {
+        const output = document.getElementById("test-output");
+        output.textContent = "";
+
+        // コンソール出力をキャプチャ
+        const originalLog = console.log;
+        const originalError = console.error;
+
+        console.log = (message) => {
+          logToOutput("test-output", message);
+          originalLog(message);
+        };
+
+        console.error = (message) => {
+          logToOutput("test-output", `ERROR: ${message}`);
+          originalError(message);
+        };
+
+        try {
+          await runPerformanceMonitorTests();
+        } catch (error) {
+          logToOutput("test-output", `Test execution failed: ${error.message}`);
+        }
+
+        // コンソール出力を復元
+        console.log = originalLog;
+        console.error = originalError;
+      }
+
+      // 監視開始
+      function startMonitoring() {
+        if (performanceMonitor) {
+          performanceMonitor.cleanup();
+        }
+
+        // モックロガー
+        const logger = {
+          info: (msg, data) => console.log(`INFO: ${msg}`, data),
+          warn: (msg, data) => console.warn(`WARN: ${msg}`, data),
+          error: (msg, data) => console.error(`ERROR: ${msg}`, data),
+          debug: (msg, data) => console.log(`DEBUG: ${msg}`, data),
+        };
+
+        // アラートコールバック
+        const alertCallback = (issues) => {
+          displayAlerts(issues);
+        };
+
+        performanceMonitor = new PerformanceMonitor(logger, {
+          memoryThreshold: 30 * 1024 * 1024, // 30MB
+          renderTimeThreshold: 16, // 16ms
+          cpuThreshold: 70, // 70%
+          sampleInterval: 1000, // 1秒
+          alertCallback: alertCallback,
+        });
+
+        performanceMonitor.startMonitoring();
+
+        // UI更新
+        document.getElementById("start-btn").disabled = true;
+        document.getElementById("stop-btn").disabled = false;
+        document.getElementById("monitoring-status").textContent = "監視中";
+        document.getElementById("monitoring-status").className =
+          "status monitoring";
+
+        // メトリクス表示の更新を開始
+        metricsUpdateInterval = setInterval(updateMetricsDisplay, 2000);
+      }
+
+      // 監視停止
+      function stopMonitoring() {
+        if (performanceMonitor) {
+          performanceMonitor.stopMonitoring();
+        }
+
+        if (metricsUpdateInterval) {
+          clearInterval(metricsUpdateInterval);
+          metricsUpdateInterval = null;
+        }
+
+        // UI更新
+        document.getElementById("start-btn").disabled = false;
+        document.getElementById("stop-btn").disabled = true;
+        document.getElementById("monitoring-status").textContent = "監視停止中";
+        document.getElementById("monitoring-status").className =
+          "status stopped";
+      }
+
+      // メトリクス表示更新
+      function updateMetricsDisplay() {
+        if (!performanceMonitor) return;
+
+        const metrics = performanceMonitor.getMetrics();
+        const content = document.getElementById("metrics-content");
+
+        let html = "";
+
+        if (metrics.memory) {
+          html += `<div class="metric-item">メモリ使用量: ${Math.round(
+            metrics.memory.current / 1024 / 1024
+          )}MB</div>`;
+          html += `<div class="metric-item">メモリ平均: ${Math.round(
+            metrics.memory.average / 1024 / 1024
+          )}MB</div>`;
+          html += `<div class="metric-item">メモリピーク: ${Math.round(
+            metrics.memory.peak / 1024 / 1024
+          )}MB</div>`;
+        }
+
+        if (metrics.cpu) {
+          html += `<div class="metric-item">CPU使用率: ${Math.round(
+            metrics.cpu.current
+          )}%</div>`;
+          html += `<div class="metric-item">CPU平均: ${Math.round(
+            metrics.cpu.average
+          )}%</div>`;
+        }
+
+        if (metrics.rendering) {
+          html += `<div class="metric-item">平均FPS: ${Math.round(
+            metrics.rendering.fps
+          )}</div>`;
+          html += `<div class="metric-item">フレームドロップ: ${metrics.frameDrops}</div>`;
+        }
+
+        html += `<div class="metric-item">監視状態: ${
+          metrics.isMonitoring ? "監視中" : "停止中"
+        }</div>`;
+
+        content.innerHTML = html || "監視を開始してください";
+      }
+
+      // アラート表示
+      function displayAlerts(issues) {
+        const alertsDiv = document.getElementById("alerts-display");
+
+        issues.forEach((issue) => {
+          const alertDiv = document.createElement("div");
+          alertDiv.className = `alert ${
+            issue.severity === "error" ? "error" : ""
+          }`;
+          alertDiv.textContent = `${issue.type}: ${issue.message}`;
+          alertsDiv.appendChild(alertDiv);
+
+          // 5秒後にアラートを削除
+          setTimeout(() => {
+            if (alertDiv.parentNode) {
+              alertDiv.parentNode.removeChild(alertDiv);
+            }
+          }, 5000);
+        });
+      }
+
+      // 負荷生成
+      function generateLoad() {
+        console.log("負荷生成中...");
+
+        // CPU負荷を生成
+        const startTime = Date.now();
+        while (Date.now() - startTime < 100) {
+          Math.random() * Math.random();
+        }
+
+        // メモリ負荷を生成
+        const largeArray = new Array(1000000).fill(Math.random());
+
+        setTimeout(() => {
+          // ガベージコレクションを促進
+          largeArray.length = 0;
+        }, 1000);
+
+        console.log("負荷生成完了");
+      }
+
+      // メトリクスクリア
+      function clearMetrics() {
+        if (performanceMonitor) {
+          performanceMonitor.clearMetrics();
+          updateMetricsDisplay();
+        }
+
+        // アラートもクリア
+        document.getElementById("alerts-display").innerHTML = "";
+      }
+
+      // パフォーマンス測定テスト
+      function testPerformanceMeasurement() {
+        const output = document.getElementById("measurement-output");
+        output.textContent = "";
+
+        if (!performanceMonitor) {
+          logToOutput("measurement-output", "エラー: 監視を開始してください");
+          return;
+        }
+
+        logToOutput("measurement-output", "パフォーマンス測定テスト開始...");
+
+        // 測定開始
+        performanceMonitor.startMeasure("test-operation");
+
+        // 何らかの処理をシミュレート
+        setTimeout(() => {
+          const duration = performanceMonitor.endMeasure("test-operation");
+          logToOutput("measurement-output", `測定完了: ${duration}ms`);
+
+          // 複数回測定
+          for (let i = 0; i < 5; i++) {
+            performanceMonitor.startMeasure(`operation-${i}`);
+
+            // 異なる処理時間をシミュレート
+            const delay = Math.random() * 50;
+            setTimeout(() => {
+              const dur = performanceMonitor.endMeasure(`operation-${i}`);
+              logToOutput("measurement-output", `操作${i}: ${dur}ms`);
+            }, delay);
+          }
+        }, 50);
+      }
+
+      // ページ読み込み時の初期化
+      window.addEventListener("load", () => {
+        console.log("PerformanceMonitor テストページが読み込まれました");
+      });
+
+      // ページアンロード時のクリーンアップ
+      window.addEventListener("beforeunload", () => {
+        if (performanceMonitor) {
+          performanceMonitor.cleanup();
+        }
+      });
+    </script>
+  </body>
+</html>

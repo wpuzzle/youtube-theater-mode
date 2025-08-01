@@ -1,370 +1,422 @@
 /**
- * YouTube Theater Mode - Keyboard Shortcuts Test Script
- * キーボードショートカット機能のテストスクリプト
+ * KeyboardShortcutManager のテスト
  */
 
-// テスト統計
-let testStats = {
-  validShortcuts: 0,
-  invalidShortcuts: 0,
-  ignoredShortcuts: 0,
+// 依存関係のモック
+class MockLogger {
+  debug() {}
+  info() {}
+  warn() {}
+  error() {}
+}
+
+class MockErrorHandler {
+  wrapSync(fn) {
+    try {
+      const result = fn();
+      return { isSuccess: () => true, isFailure: () => false, data: result };
+    } catch (error) {
+      return { isSuccess: () => false, isFailure: () => true, error };
+    }
+  }
+
+  wrapAsync(fn) {
+    return Promise.resolve(fn())
+      .then((result) => ({
+        isSuccess: () => true,
+        isFailure: () => false,
+        data: result,
+      }))
+      .catch((error) => ({
+        isSuccess: () => false,
+        isFailure: () => true,
+        error,
+      }));
+  }
+}
+
+class MockStateStore {
+  constructor(initialState = {}) {
+    this.state = {
+      theaterMode: {
+        isEnabled: false,
+        opacity: 0.7,
+      },
+      settings: {
+        shortcuts: {},
+      },
+      ...initialState,
+    };
+    this.listeners = new Map();
+    this.dispatchCalls = [];
+  }
+
+  getState() {
+    return this.state;
+  }
+
+  getStateValue(path, defaultValue) {
+    const parts = path.split(".");
+    let value = this.state;
+
+    for (const part of parts) {
+      if (value === undefined || value === null) {
+        return defaultValue;
+      }
+      value = value[part];
+    }
+
+    return value !== undefined ? value : defaultValue;
+  }
+
+  subscribeToPath(path, listener) {
+    this.listeners.set(path, listener);
+    return () => this.listeners.delete(path);
+  }
+
+  async dispatch(action) {
+    this.dispatchCalls.push(action);
+
+    // 簡易的なリデューサー
+    if (action.type === "THEATER_MODE_TOGGLE") {
+      this.state.theaterMode.isEnabled = !this.state.theaterMode.isEnabled;
+    } else if (action.type === "OPACITY_UPDATE") {
+      this.state.theaterMode.opacity = action.payload.opacity;
+    } else if (action.type === "SETTINGS_UPDATE") {
+      this.state.settings = {
+        ...this.state.settings,
+        ...action.payload.updates,
+      };
+    }
+
+    return { isSuccess: () => true, isFailure: () => false, data: this.state };
+  }
+}
+
+// ActionCreator モック
+const ActionCreator = {
+  toggleTheaterMode: () => ({ type: "THEATER_MODE_TOGGLE" }),
+  updateOpacity: (opacity) => ({
+    type: "OPACITY_UPDATE",
+    payload: { opacity },
+  }),
+  updateSettings: (updates) => ({
+    type: "SETTINGS_UPDATE",
+    payload: { updates },
+  }),
 };
 
-// 模擬ElementDetectorクラス（テスト用）
-class MockElementDetector {
-  static isYouTubeVideoPage() {
-    // テスト環境では常にfalseを返す（実際のYouTubeページではない）
-    return false;
-  }
+// キーボードイベントを作成するヘルパー関数
+function createKeyboardEvent(key, modifiers = {}) {
+  return {
+    key,
+    ctrlKey: !!modifiers.ctrl,
+    shiftKey: !!modifiers.shift,
+    altKey: !!modifiers.alt,
+    metaKey: !!modifiers.meta,
+    preventDefault: () => {},
+    stopPropagation: () => {},
+  };
 }
 
-// 模擬TheaterModeControllerクラス（テスト用）
-class MockTheaterModeController {
-  constructor() {
-    this.isTheaterModeActive = false;
-    this.eventListeners = new Map();
-    this.stateChangeCallbacks = [];
+// テスト関数
+function runKeyboardShortcutTests() {
+  console.log("Running KeyboardShortcutManager tests...");
 
-    // キーボードショートカットを設定
-    this.setupKeyboardShortcuts();
+  // テスト環境のセットアップ
+  const setupTestEnvironment = () => {
+    // グローバルに ActionCreator を設定
+    window.ActionCreator = ActionCreator;
 
-    console.log("Mock Theater Mode Controller initialized");
-  }
-
-  toggleTheaterMode() {
-    this.isTheaterModeActive = !this.isTheaterModeActive;
-    console.log(
-      `Theater mode toggled: ${this.isTheaterModeActive ? "ON" : "OFF"}`
-    );
-
-    // テスト結果を更新
-    this.updateTestResults("toggle", this.isTheaterModeActive);
-  }
-
-  dispatchStateChangeEvent(eventType, eventData = {}) {
-    console.log(`State change event: ${eventType}`, eventData);
-
-    // テスト統計を更新
-    if (eventType === "keyboardShortcutUsed") {
-      testStats.validShortcuts++;
-      this.updateTestStats();
-    }
-  }
-
-  addEventListener(eventType, listener) {
-    if (!this.eventListeners.has(eventType)) {
-      this.eventListeners.set(eventType, []);
-    }
-    this.eventListeners.get(eventType).push(listener);
-  }
-
-  // キーボードショートカット設定（実際のコードと同じロジック）
-  setupKeyboardShortcuts() {
-    console.log("Setting up keyboard shortcuts for testing");
-
-    const keyboardHandler = (event) => {
-      // 最後に検出されたキーを表示
-      this.updateLastKeyDetected(event);
-
-      // YouTube ページでのみ動作する条件分岐
-      if (!MockElementDetector.isYouTubeVideoPage()) {
-        // テスト環境では YouTube ページではないことを表示
-        this.updateYouTubePageTest(false);
-        return;
-      }
-
-      // Ctrl+Shift+T ショートカットの検出
-      if (event.ctrlKey && event.shiftKey && event.key === "T") {
-        // 既存の YouTube ショートカットとの競合回避
-        const activeElement = document.activeElement;
-        if (
-          activeElement &&
-          (activeElement.tagName === "INPUT" ||
-            activeElement.tagName === "TEXTAREA" ||
-            activeElement.contentEditable === "true" ||
-            activeElement.isContentEditable)
-        ) {
-          console.log("Keyboard shortcut ignored - input field focused");
-          testStats.ignoredShortcuts++;
-          this.updateInputConflictTest("ignored", activeElement);
-          this.updateTestStats();
-          return;
-        }
-
-        // YouTube の検索ボックスにフォーカスがある場合も無視
-        if (
-          activeElement &&
-          (activeElement.id === "search" ||
-            activeElement.id === "mock-search" ||
-            activeElement.classList.contains("ytd-searchbox") ||
-            activeElement.classList.contains("mock-search-box") ||
-            activeElement.closest("#search-input") ||
-            activeElement.closest("ytd-searchbox"))
-        ) {
-          console.log("Keyboard shortcut ignored - search box focused");
-          testStats.ignoredShortcuts++;
-          this.updateInputConflictTest("ignored-search", activeElement);
-          this.updateTestStats();
-          return;
-        }
-
-        // コメント入力欄にフォーカスがある場合も無視
-        if (
-          activeElement &&
-          (activeElement.id === "placeholder-area" ||
-            activeElement.id === "mock-comment" ||
-            activeElement.classList.contains("yt-simple-endpoint") ||
-            activeElement.classList.contains("mock-comment-area") ||
-            activeElement.closest("#comments") ||
-            activeElement.closest("ytd-comments"))
-        ) {
-          console.log("Keyboard shortcut ignored - comment area focused");
-          testStats.ignoredShortcuts++;
-          this.updateInputConflictTest("ignored-comment", activeElement);
-          this.updateTestStats();
-          return;
-        }
-
-        // イベントの伝播を停止
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-
-        console.log("Keyboard shortcut triggered (Ctrl+Shift+T)");
-
-        // イベント伝播停止テストを更新
-        this.updateEventPropagationTest(true);
-
-        // シアターモードを切り替え
-        this.toggleTheaterMode();
-
-        // キーボードショートカット使用イベントを発火
-        this.dispatchStateChangeEvent("keyboardShortcutUsed", {
-          shortcut: "Ctrl+Shift+T",
-          isActive: this.isTheaterModeActive,
-          timestamp: Date.now(),
-        });
-      } else {
-        // 他のキーの組み合わせをテスト
-        this.updateKeyDistinctionTest(event);
-      }
+    // 依存オブジェクトを作成
+    const dependencies = {
+      logger: new MockLogger(),
+      errorHandler: new MockErrorHandler(),
+      stateStore: new MockStateStore(),
     };
 
-    // キーボードイベントリスナーを追加（キャプチャフェーズで処理）
-    document.addEventListener("keydown", keyboardHandler, true);
+    // マネージャーを作成
+    const manager = new KeyboardShortcutManager(dependencies);
 
-    // イベントリスナーを管理用Mapに追加
-    this.addEventListener("keydown", keyboardHandler);
+    return { manager, dependencies };
+  };
 
-    console.log("Keyboard shortcuts setup completed for testing");
+  // テスト1: 初期化
+  async function testInitialization() {
+    console.log("Test 1: Initialization");
+
+    const { manager, dependencies } = setupTestEnvironment();
+    const result = await manager.initialize();
+
+    console.assert(
+      result.isSuccess() && result.data === true,
+      "Manager should initialize successfully"
+    );
+
+    // デフォルトショートカットが設定されているか確認
+    const shortcuts = manager.getShortcuts().data;
+    console.assert(
+      shortcuts.size === 3,
+      "Manager should have 3 default shortcuts"
+    );
+    console.assert(
+      shortcuts.has("theaterMode"),
+      "Manager should have theaterMode shortcut"
+    );
+
+    console.log("Test 1: Passed");
   }
 
-  // テスト結果更新メソッド
-  updateLastKeyDetected(event) {
-    const keyCombo = [];
-    if (event.ctrlKey) keyCombo.push("Ctrl");
-    if (event.shiftKey) keyCombo.push("Shift");
-    if (event.altKey) keyCombo.push("Alt");
-    if (event.metaKey) keyCombo.push("Meta");
-    keyCombo.push(event.key);
+  // テスト2: ショートカットの登録と削除
+  async function testShortcutRegistration() {
+    console.log("Test 2: Shortcut Registration");
 
-    const keyString = keyCombo.join("+");
-    document.getElementById("last-key-detected").textContent = keyString;
-  }
+    const { manager } = setupTestEnvironment();
+    await manager.initialize();
 
-  updateTestResults(action, isActive) {
-    const resultElement = document.getElementById("basic-shortcut-result");
-    if (action === "toggle") {
-      resultElement.className = "test-result test-pass";
-      resultElement.innerHTML = `✓ キーボードショートカットが正常に動作しました！<br>シアターモード: ${
-        isActive ? "ON" : "OFF"
-      }`;
-    }
-  }
-
-  updateYouTubePageTest(isYouTubePage) {
-    const resultElement = document.getElementById("youtube-page-result");
-    if (isYouTubePage) {
-      resultElement.className = "test-result test-pass";
-      resultElement.textContent = "✓ YouTube ページとして認識されました";
-    } else {
-      resultElement.className = "test-result test-info";
-      resultElement.textContent =
-        "ℹ このページはYouTubeページではありません（期待される動作）";
-    }
-  }
-
-  updateInputConflictTest(type, element) {
-    const resultElement = document.getElementById("input-conflict-result");
-    let message = "";
-
-    switch (type) {
-      case "ignored":
-        message = `✓ 入力フィールド（${element.tagName}）でのショートカットが正しく無視されました`;
-        break;
-      case "ignored-search":
-        message = `✓ 検索ボックスでのショートカットが正しく無視されました`;
-        break;
-      case "ignored-comment":
-        message = `✓ コメント入力欄でのショートカットが正しく無視されました`;
-        break;
-      default:
-        message = "✓ 入力フィールドでの競合回避が正常に動作しました";
-    }
-
-    resultElement.className = "test-result test-pass";
-    resultElement.textContent = message;
-  }
-
-  updateEventPropagationTest(stopped) {
-    const resultElement = document.getElementById("event-propagation-result");
-    if (stopped) {
-      resultElement.className = "test-result test-pass";
-      resultElement.textContent = "✓ イベントの伝播が正しく停止されました";
-    }
-  }
-
-  updateKeyDistinctionTest(event) {
-    const isValidShortcut =
-      event.ctrlKey && event.shiftKey && event.key === "T";
-
-    if (!isValidShortcut && (event.ctrlKey || event.shiftKey)) {
-      const keyCombo = [];
-      if (event.ctrlKey) keyCombo.push("Ctrl");
-      if (event.shiftKey) keyCombo.push("Shift");
-      if (event.altKey) keyCombo.push("Alt");
-      keyCombo.push(event.key);
-
-      const keyString = keyCombo.join("+");
-      const invalidKeysElement = document.getElementById("invalid-keys");
-      const currentInvalid = invalidKeysElement.textContent;
-
-      if (currentInvalid === "なし") {
-        invalidKeysElement.textContent = keyString;
-      } else if (!currentInvalid.includes(keyString)) {
-        invalidKeysElement.textContent = currentInvalid + ", " + keyString;
-      }
-
-      testStats.invalidShortcuts++;
-      this.updateTestStats();
-
-      const resultElement = document.getElementById("key-distinction-result");
-      resultElement.className = "test-result test-pass";
-      resultElement.textContent = `✓ 無効なキー組み合わせ（${keyString}）が正しく区別されました`;
-    }
-  }
-
-  updateTestStats() {
-    document.getElementById("valid-shortcuts").textContent =
-      testStats.validShortcuts;
-    document.getElementById("invalid-shortcuts").textContent =
-      testStats.invalidShortcuts;
-    document.getElementById("ignored-shortcuts").textContent =
-      testStats.ignoredShortcuts;
-  }
-}
-
-// 追加のテスト関数
-function runAdditionalTests() {
-  console.log("Running additional keyboard shortcut tests...");
-
-  // 1. イベントリスナーの重複登録テスト
-  testEventListenerDuplication();
-
-  // 2. 特殊キーの組み合わせテスト
-  testSpecialKeyCombinations();
-
-  // 3. フォーカス状態の変更テスト
-  testFocusStateChanges();
-}
-
-function testEventListenerDuplication() {
-  console.log("Testing event listener duplication...");
-
-  // 複数のコントローラーインスタンスを作成してイベントリスナーの重複をテスト
-  const controller1 = new MockTheaterModeController();
-  const controller2 = new MockTheaterModeController();
-
-  console.log(
-    "Multiple controllers created - checking for event listener conflicts"
-  );
-}
-
-function testSpecialKeyCombinations() {
-  console.log("Testing special key combinations...");
-
-  // 特殊なキーの組み合わせをシミュレート
-  const specialCombinations = [
-    { ctrlKey: true, shiftKey: false, key: "T" },
-    { ctrlKey: false, shiftKey: true, key: "T" },
-    { ctrlKey: true, shiftKey: true, key: "t" }, // 小文字
-    { ctrlKey: true, shiftKey: true, altKey: true, key: "T" },
-  ];
-
-  specialCombinations.forEach((combo, index) => {
-    console.log(`Testing combination ${index + 1}:`, combo);
-  });
-}
-
-function testFocusStateChanges() {
-  console.log("Testing focus state changes...");
-
-  // 異なる要素にフォーカスを移動してテスト
-  const testElements = [
-    document.getElementById("mock-search"),
-    document.getElementById("mock-comment"),
-    document.getElementById("general-input"),
-  ];
-
-  testElements.forEach((element, index) => {
-    if (element) {
-      setTimeout(() => {
-        element.focus();
-        console.log(`Focus moved to element ${index + 1}: ${element.id}`);
-      }, index * 1000);
-    }
-  });
-}
-
-// ページ読み込み完了時にテストを初期化
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("Keyboard shortcuts test page loaded");
-
-  // メインのテストコントローラーを作成
-  const testController = new MockTheaterModeController();
-
-  // 追加テストを実行
-  setTimeout(runAdditionalTests, 1000);
-
-  // YouTube ページ判定テストを実行
-  testController.updateYouTubePageTest(
-    MockElementDetector.isYouTubeVideoPage()
-  );
-
-  console.log("All keyboard shortcut tests initialized");
-});
-
-// グローバルエラーハンドリング
-window.addEventListener("error", (event) => {
-  console.error("Test error:", event.error);
-});
-
-// キーボードイベントのデバッグ情報
-document.addEventListener(
-  "keydown",
-  (event) => {
-    console.log("Raw keyboard event:", {
-      key: event.key,
-      code: event.code,
-      ctrlKey: event.ctrlKey,
-      shiftKey: event.shiftKey,
-      altKey: event.altKey,
-      metaKey: event.metaKey,
-      target: event.target.tagName,
-      targetId: event.target.id,
+    // 新しいショートカットを登録
+    const result = manager.registerShortcut("testShortcut", {
+      key: "x",
+      modifiers: { ctrl: true, shift: false },
+      description: "Test shortcut",
+      action: "testAction",
+      context: "global",
     });
-  },
-  true
-);
 
-console.log("Keyboard shortcuts test script loaded");
+    console.assert(
+      result.isSuccess() && result.data === true,
+      "Shortcut registration should succeed"
+    );
+
+    // 登録されたショートカットを取得
+    const shortcut = manager.getShortcuts("testShortcut").data;
+    console.assert(
+      shortcut && shortcut.key === "x",
+      "Registered shortcut should be retrievable"
+    );
+
+    // ショートカットを削除
+    const deleteResult = manager.unregisterShortcut("testShortcut");
+    console.assert(
+      deleteResult.isSuccess() && deleteResult.data === true,
+      "Shortcut unregistration should succeed"
+    );
+
+    // 削除されたことを確認
+    const deletedShortcut = manager.getShortcuts("testShortcut").data;
+    console.assert(
+      deletedShortcut === null,
+      "Unregistered shortcut should not be retrievable"
+    );
+
+    console.log("Test 2: Passed");
+  }
+
+  // テスト3: ショートカットの有効化/無効化
+  async function testShortcutEnabling() {
+    console.log("Test 3: Shortcut Enabling/Disabling");
+
+    const { manager } = setupTestEnvironment();
+    await manager.initialize();
+
+    // 特定のショートカットを無効化
+    const disableResult = manager.setShortcutEnabled("theaterMode", false);
+    console.assert(
+      disableResult.isSuccess() && disableResult.data === true,
+      "Disabling shortcut should succeed"
+    );
+
+    // 無効化されたことを確認
+    const disabledShortcut = manager.getShortcuts("theaterMode").data;
+    console.assert(
+      disabledShortcut && disabledShortcut.enabled === false,
+      "Shortcut should be disabled"
+    );
+
+    // 特定のショートカットを再度有効化
+    const enableResult = manager.setShortcutEnabled("theaterMode", true);
+    console.assert(
+      enableResult.isSuccess() && enableResult.data === true,
+      "Enabling shortcut should succeed"
+    );
+
+    // 有効化されたことを確認
+    const enabledShortcut = manager.getShortcuts("theaterMode").data;
+    console.assert(
+      enabledShortcut && enabledShortcut.enabled === true,
+      "Shortcut should be enabled"
+    );
+
+    // 全てのショートカットを無効化
+    const disableAllResult = manager.setAllShortcutsEnabled(false);
+    console.assert(
+      disableAllResult.isSuccess() && disableAllResult.data === true,
+      "Disabling all shortcuts should succeed"
+    );
+
+    // 全て無効化されたことを確認
+    const allShortcuts = manager.getShortcuts().data;
+    let allDisabled = true;
+    for (const [id, shortcut] of allShortcuts.entries()) {
+      if (shortcut.enabled) {
+        allDisabled = false;
+        break;
+      }
+    }
+    console.assert(allDisabled, "All shortcuts should be disabled");
+
+    console.log("Test 3: Passed");
+  }
+
+  // テスト4: ショートカットの実行
+  async function testShortcutExecution() {
+    console.log("Test 4: Shortcut Execution");
+
+    const { manager, dependencies } = setupTestEnvironment();
+    await manager.initialize();
+
+    // アクションハンドラーを登録
+    let actionExecuted = false;
+    manager.registerActionHandlers({
+      testAction: () => {
+        actionExecuted = true;
+      },
+    });
+
+    // カスタムショートカットを登録
+    manager.registerShortcut("testExecutionShortcut", {
+      key: "z",
+      modifiers: { ctrl: true },
+      action: "testAction",
+    });
+
+    // ショートカットをシミュレート
+    manager._handleKeyDown(createKeyboardEvent("z", { ctrl: true }));
+
+    // アクションが実行されたことを確認
+    console.assert(actionExecuted, "Action handler should be executed");
+
+    // StateStoreアクションをシミュレート
+    manager._handleKeyDown(
+      createKeyboardEvent("t", { ctrl: true, shift: true })
+    );
+
+    // StateStoreにアクションがディスパッチされたことを確認
+    console.assert(
+      dependencies.stateStore.dispatchCalls.length === 1,
+      "Action should be dispatched to StateStore"
+    );
+    console.assert(
+      dependencies.stateStore.dispatchCalls[0].type === "THEATER_MODE_TOGGLE",
+      "Correct action type should be dispatched"
+    );
+
+    console.log("Test 4: Passed");
+  }
+
+  // テスト5: 設定の保存と読み込み
+  async function testSettingsPersistence() {
+    console.log("Test 5: Settings Persistence");
+
+    const { manager, dependencies } = setupTestEnvironment();
+    await manager.initialize();
+
+    // ショートカットを変更
+    manager.registerShortcut("theaterMode", {
+      key: "y",
+      modifiers: { ctrl: true, shift: true },
+      description: "変更されたショートカット",
+      action: "toggleTheaterMode",
+    });
+
+    // 設定を保存
+    const saveResult = await manager.saveShortcuts();
+    console.assert(
+      saveResult.isSuccess() && saveResult.data === true,
+      "Saving shortcuts should succeed"
+    );
+
+    // StateStoreにアクションがディスパッチされたことを確認
+    console.assert(
+      dependencies.stateStore.dispatchCalls.length === 1,
+      "Settings update action should be dispatched"
+    );
+    console.assert(
+      dependencies.stateStore.dispatchCalls[0].type === "SETTINGS_UPDATE",
+      "Correct action type should be dispatched"
+    );
+
+    // 設定が保存されたことを確認
+    const savedShortcuts = dependencies.stateStore.state.settings.shortcuts;
+    console.assert(
+      savedShortcuts && savedShortcuts.theaterMode,
+      "Shortcuts should be saved in settings"
+    );
+    console.assert(
+      savedShortcuts.theaterMode.key === "y",
+      "Correct shortcut key should be saved"
+    );
+
+    console.log("Test 5: Passed");
+  }
+
+  // テスト6: クリーンアップ
+  async function testCleanup() {
+    console.log("Test 6: Cleanup");
+
+    const { manager } = setupTestEnvironment();
+    await manager.initialize();
+
+    // クリーンアップ前にイベントリスナーが設定されていることを確認
+    console.assert(
+      manager.eventListeners.size > 0,
+      "Event listeners should be set up"
+    );
+
+    // クリーンアップ
+    const cleanupResult = manager.cleanup();
+    console.assert(
+      cleanupResult.isSuccess() && cleanupResult.data === true,
+      "Cleanup should succeed"
+    );
+
+    // イベントリスナーがクリアされたことを確認
+    console.assert(
+      manager.eventListeners.size === 0,
+      "Event listeners should be cleared"
+    );
+
+    console.log("Test 6: Passed");
+  }
+
+  // 全テストを実行
+  async function runAllTests() {
+    try {
+      await testInitialization();
+      await testShortcutRegistration();
+      await testShortcutEnabling();
+      await testShortcutExecution();
+      await testSettingsPersistence();
+      await testCleanup();
+
+      console.log("All KeyboardShortcutManager tests passed!");
+    } catch (error) {
+      console.error("Test failed:", error);
+    }
+  }
+
+  runAllTests();
+}
+
+// テストの実行
+if (typeof window !== "undefined") {
+  // ブラウザ環境
+  if (document.readyState === "complete") {
+    runKeyboardShortcutTests();
+  } else {
+    window.addEventListener("load", runKeyboardShortcutTests);
+  }
+} else if (typeof module !== "undefined" && module.exports) {
+  // Node.js環境
+  module.exports = { runKeyboardShortcutTests };
+}

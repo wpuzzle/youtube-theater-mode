@@ -1,0 +1,195 @@
+{
+  "executionDate": "2025-07-31T09:56:26.304Z",
+  "totalTests": 26,
+  "passedTests": 5,
+  "failedTests": 14,
+  "skippedTests": 7,
+  "testResults": [
+    {
+      "name": "run-logger-tests.js",
+      "status": "PASSED",
+      "category": "executable"
+    },
+    {
+      "name": "run-logger-debug-tests.js",
+      "status": "PASSED",
+      "category": "executable"
+    },
+    {
+      "name": "run-message-bus-tests.js",
+      "status": "PASSED",
+      "category": "executable"
+    },
+    {
+      "name": "run-storage-adapter-tests.js",
+      "status": "PASSED",
+      "category": "executable"
+    },
+    {
+      "name": "run-performance-monitor-tests.js",
+      "status": "PASSED",
+      "category": "executable"
+    },
+    {
+      "name": "run-theater-mode-controller-tests.js",
+      "status": "FAILED",
+      "category": "browser-dependent",
+      "issue": "Requires DOM/browser environment"
+    },
+    {
+      "name": "run-shortcut-tests.js",
+      "status": "FAILED",
+      "category": "browser-dependent",
+      "issue": "Requires DOM/browser environment"
+    },
+    {
+      "name": "run-opacity-tests.js",
+      "status": "FAILED",
+      "category": "browser-dependent",
+      "issue": "Requires DOM/browser environment"
+    },
+    {
+      "name": "run-background-service-tests.js",
+      "status": "FAILED",
+      "category": "browser-dependent",
+      "issue": "Requires DOM/browser environment"
+    },
+    {
+      "name": "run-popup-controller-tests.js",
+      "status": "FAILED",
+      "category": "browser-dependent",
+      "issue": "Requires DOM/browser environment"
+    },
+    {
+      "name": "run-popup-communicator-tests.js",
+      "status": "FAILED",
+      "category": "browser-dependent",
+      "issue": "Requires DOM/browser environment"
+    },
+    {
+      "name": "run-ui-event-handler-tests.js",
+      "status": "FAILED",
+      "category": "browser-dependent",
+      "issue": "Requires DOM/browser environment"
+    },
+    {
+      "name": "run-content-script-manager-tests.js",
+      "status": "FAILED",
+      "category": "browser-dependent",
+      "issue": "Requires DOM/browser environment"
+    },
+    {
+      "name": "run-content-script-communicator-tests.js",
+      "status": "FAILED",
+      "category": "browser-dependent",
+      "issue": "Requires DOM/browser environment"
+    },
+    {
+      "name": "run-youtube-page-detector-tests.js",
+      "status": "FAILED",
+      "category": "browser-dependent",
+      "issue": "Requires DOM/browser environment"
+    },
+    {
+      "name": "run-resource-manager-tests.js",
+      "status": "FAILED",
+      "category": "browser-dependent",
+      "issue": "Requires DOM/browser environment"
+    },
+    {
+      "name": "run-dom-optimizer-tests.js",
+      "status": "FAILED",
+      "category": "browser-dependent",
+      "issue": "Requires DOM/browser environment"
+    },
+    {
+      "name": "run-state-store-tests.js",
+      "status": "SKIPPED",
+      "category": "incomplete",
+      "issue": "Test implementation incomplete"
+    },
+    {
+      "name": "run-settings-tests.js",
+      "status": "SKIPPED",
+      "category": "incomplete",
+      "issue": "Test implementation incomplete"
+    },
+    {
+      "name": "run-tab-state-tests.js",
+      "status": "SKIPPED",
+      "category": "incomplete",
+      "issue": "Test implementation incomplete"
+    },
+    {
+      "name": "run-data-validator-tests.js",
+      "status": "SKIPPED",
+      "category": "incomplete",
+      "issue": "Test implementation incomplete"
+    },
+    {
+      "name": "run-element-manager-tests.js",
+      "status": "SKIPPED",
+      "category": "incomplete",
+      "issue": "Test implementation incomplete"
+    },
+    {
+      "name": "run-element-observer-tests.js",
+      "status": "SKIPPED",
+      "category": "incomplete",
+      "issue": "Test implementation incomplete"
+    },
+    {
+      "name": "run-overlay-tests.js",
+      "status": "SKIPPED",
+      "category": "incomplete",
+      "issue": "Test implementation incomplete"
+    },
+    {
+      "name": "run-error-handler-tests.js",
+      "status": "FAILED",
+      "category": "missing",
+      "issue": "Test file does not exist"
+    },
+    {
+      "name": "run-service-worker-manager-tests.js",
+      "status": "FAILED",
+      "category": "missing",
+      "issue": "Test file does not exist"
+    }
+  ],
+  "issues": [
+    "run-theater-mode-controller-tests.js: Requires browser environment for DOM operations",
+    "run-shortcut-tests.js: Requires browser environment for DOM operations",
+    "run-opacity-tests.js: Requires browser environment for DOM operations",
+    "run-background-service-tests.js: Requires browser environment for DOM operations",
+    "run-popup-controller-tests.js: Requires browser environment for DOM operations",
+    "run-popup-communicator-tests.js: Requires browser environment for DOM operations",
+    "run-ui-event-handler-tests.js: Requires browser environment for DOM operations",
+    "run-content-script-manager-tests.js: Requires browser environment for DOM operations",
+    "run-content-script-communicator-tests.js: Requires browser environment for DOM operations",
+    "run-youtube-page-detector-tests.js: Requires browser environment for DOM operations",
+    "run-resource-manager-tests.js: Requires browser environment for DOM operations",
+    "run-dom-optimizer-tests.js: Requires browser environment for DOM operations",
+    "run-state-store-tests.js: Test implementation is incomplete",
+    "run-settings-tests.js: Test implementation is incomplete",
+    "run-tab-state-tests.js: Test implementation is incomplete",
+    "run-data-validator-tests.js: Test implementation is incomplete",
+    "run-element-manager-tests.js: Test implementation is incomplete",
+    "run-element-observer-tests.js: Test implementation is incomplete",
+    "run-overlay-tests.js: Test implementation is incomplete",
+    "run-error-handler-tests.js: Test file does not exist",
+    "run-service-worker-manager-tests.js: Test file does not exist"
+  ],
+  "recommendations": [
+    "Create missing test files (run-error-handler-tests.js, run-service-worker-manager-tests.js)",
+    "Complete incomplete test implementations for business layer components",
+    "Set up browser test environment (e.g., JSDOM) for DOM-dependent tests",
+    "Implement proper test runners for all component categories",
+    "Add test coverage measurement tools",
+    "Create integration test suite for component interactions",
+    "Establish continuous integration pipeline for automated testing",
+    "Document test execution procedures and requirements",
+    "Implement mock factories for Chrome API dependencies",
+    "Add performance benchmarking to test suite"
+  ]
+}

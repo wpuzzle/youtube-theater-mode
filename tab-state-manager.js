@@ -1,18 +1,63 @@
 /**
- * YouTube Theater Mode - タブ状態管理モジュール
- * 複数タブでの状態管理と同期を担当
+ * TabStateManager
+ * 新しい StateStore を使用したタブ状態管理を実装
  */
+
+// 依存関係のインポート
+let Logger,
+  ErrorHandler,
+  Result,
+  AppError,
+  ErrorType,
+  StateStore,
+  ActionCreator,
+  ActionType;
+
+// Node.js環境での依存関係の解決
+if (typeof require !== "undefined") {
+  ({ Logger } = require("./infrastructure/logger.js"));
+  ({
+    ErrorHandler,
+    Result,
+    AppError,
+    ErrorType,
+  } = require("./infrastructure/error-handler.js"));
+  ({
+    StateStore,
+    ActionCreator,
+    ActionType,
+  } = require("./infrastructure/state-store.js"));
+}
 
 /**
  * タブ状態管理クラス
  * 複数タブでのシアターモード状態を管理
  */
 class TabStateManager {
-  constructor() {
-    this.tabStates = new Map(); // タブIDごとの状態を管理
-    this.activeTabId = null; // 現在アクティブなタブID
-    this.syncInterval = null; // 定期的な同期用インターバル
-    this.syncIntervalTime = 5000; // 同期間隔（ミリ秒）
+  /**
+   * TabStateManagerインスタンスを作成
+   * @param {Object} options - オプション
+   * @param {StateStore} options.stateStore - 状態ストア
+   * @param {Object} [options.logger] - ロガーインスタンス
+   * @param {Object} [options.errorHandler] - エラーハンドラーインスタンス
+   * @param {number} [options.syncIntervalTime=5000] - 同期間隔（ミリ秒）
+   */
+  constructor(options) {
+    if (!options || !options.stateStore) {
+      throw new Error("StateStore is required");
+    }
+
+    this.stateStore = options.stateStore;
+    this.logger = options.logger;
+    this.errorHandler = options.errorHandler;
+    this.syncIntervalTime = options.syncIntervalTime || 5000;
+
+    // 同期インターバル
+    this.syncInterval = null;
+
+    // 競合解決用のロック
+    this.locks = new Map();
+    this.lockTimeout = 5000; // ロックのタイムアウト（ミリ秒）
 
     // 初期化
     this.initialize();
@@ -21,14 +66,16 @@ class TabStateManager {
   /**
    * 初期化処理
    */
-  initialize() {
-    console.log("YouTube Theater Mode: TabStateManager initialized");
+  async initialize() {
+    if (this.logger) {
+      this.logger.info("TabStateManager initialized");
+    }
 
     // タブ関連イベントリスナーを設定
     this.setupTabListeners();
 
     // 現在のアクティブタブを取得
-    this.getCurrentActiveTab();
+    await this.getCurrentActiveTab();
 
     // 定期的な状態同期を開始
     this.startPeriodicSync();
@@ -39,77 +86,136 @@ class TabStateManager {
    */
   setupTabListeners() {
     if (typeof chrome === "undefined" || !chrome.tabs) {
-      console.warn(
-        "YouTube Theater Mode: Chrome API not available for tab management"
-      );
+      if (this.logger) {
+        this.logger.warn("Chrome API not available for tab management");
+      }
       return;
     }
 
     // タブ更新時のリスナー
-    chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+    chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       if (
         changeInfo.status === "complete" &&
         tab.url &&
         tab.url.includes("youtube.com/watch")
       ) {
-        console.log(`YouTube Theater Mode: Tab ${tabId} updated`, tab.url);
-        this.registerTab(tabId, tab);
+        if (this.logger) {
+          this.logger.debug(`Tab ${tabId} updated`, { url: tab.url });
+        }
+
+        await this.registerTab(tabId, tab);
       }
     });
 
     // タブ切り替え時のリスナー
-    chrome.tabs.onActivated.addListener(({ tabId }) => {
-      chrome.tabs.get(tabId, (tab) => {
-        if (chrome.runtime.lastError) {
-          console.warn(
-            "YouTube Theater Mode: Error getting tab info",
-            chrome.runtime.lastError
-          );
-          return;
-        }
+    chrome.tabs.onActivated.addListener(async ({ tabId }) => {
+      try {
+        const tab = await this.getTabInfo(tabId);
 
         if (tab && tab.url && tab.url.includes("youtube.com/watch")) {
-          console.log(`YouTube Theater Mode: Tab ${tabId} activated`);
-          this.setActiveTab(tabId);
-          this.syncTabState(tabId);
+          if (this.logger) {
+            this.logger.debug(`Tab ${tabId} activated`);
+          }
+
+          await this.activateTab(tabId);
+          await this.syncTabState(tabId);
         }
-      });
+      } catch (error) {
+        if (this.logger) {
+          this.logger.warn(
+            `Error handling tab activation for tab ${tabId}`,
+            error
+          );
+        }
+      }
     });
 
     // タブ削除時のリスナー
-    chrome.tabs.onRemoved.addListener((tabId) => {
-      if (this.tabStates.has(tabId)) {
-        console.log(`YouTube Theater Mode: Tab ${tabId} removed`);
-        this.unregisterTab(tabId);
+    chrome.tabs.onRemoved.addListener(async (tabId) => {
+      const state = this.stateStore.getState();
+      if (state.tabs.tabStates.has(tabId)) {
+        if (this.logger) {
+          this.logger.debug(`Tab ${tabId} removed`);
+        }
+
+        await this.unregisterTab(tabId);
       }
+    });
+  }
+
+  /**
+   * タブ情報を取得
+   * @param {number} tabId - タブID
+   * @returns {Promise<Object|null>} タブ情報
+   */
+  async getTabInfo(tabId) {
+    return new Promise((resolve) => {
+      if (typeof chrome === "undefined" || !chrome.tabs) {
+        resolve(null);
+        return;
+      }
+
+      chrome.tabs.get(tabId, (tab) => {
+        if (chrome.runtime.lastError) {
+          if (this.logger) {
+            this.logger.warn(
+              `Error getting tab info for tab ${tabId}`,
+              chrome.runtime.lastError
+            );
+          }
+          resolve(null);
+          return;
+        }
+
+        resolve(tab);
+      });
     });
   }
 
   /**
    * 現在のアクティブタブを取得
    */
-  getCurrentActiveTab() {
+  async getCurrentActiveTab() {
     if (typeof chrome === "undefined" || !chrome.tabs) {
       return;
     }
 
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (chrome.runtime.lastError) {
-        console.warn(
-          "YouTube Theater Mode: Error querying active tab",
-          chrome.runtime.lastError
-        );
-        return;
-      }
+    try {
+      const tabs = await new Promise((resolve) => {
+        chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+          if (chrome.runtime.lastError) {
+            if (this.logger) {
+              this.logger.warn(
+                "Error querying active tab",
+                chrome.runtime.lastError
+              );
+            }
+            resolve([]);
+            return;
+          }
+
+          resolve(tabs);
+        });
+      });
 
       if (tabs && tabs.length > 0) {
         const activeTab = tabs[0];
         if (activeTab.url && activeTab.url.includes("youtube.com/watch")) {
-          this.setActiveTab(activeTab.id);
-          this.registerTab(activeTab.id, activeTab);
+          await this.activateTab(activeTab.id);
+          await this.registerTab(activeTab.id, activeTab);
         }
       }
-    });
+    } catch (error) {
+      if (this.logger) {
+        this.logger.error("Error getting current active tab", error);
+      }
+
+      if (this.errorHandler) {
+        this.errorHandler.handleError(error, {
+          context: { operation: "getCurrentActiveTab" },
+        });
+      }
+    }
   }
 
   /**
@@ -119,34 +225,40 @@ class TabStateManager {
    */
   async registerTab(tabId, tab) {
     try {
-      // 設定を読み込み
-      const settings = await this.loadSettings();
+      // 既に登録されているか確認
+      const state = this.stateStore.getState();
+      const isRegistered = state.tabs.tabStates.has(tabId);
 
-      // タブの状態を初期化
-      const tabState = {
-        url: tab.url,
-        title: tab.title || "",
-        theaterModeEnabled: settings.theaterModeEnabled || false,
-        opacity: settings.opacity || 0.7,
-        lastSync: Date.now(),
-        isActive: this.activeTabId === tabId,
-      };
+      // タブ登録アクションをディスパッチ
+      await this.stateStore.dispatch(
+        ActionCreator.registerTab(tabId, {
+          url: tab.url,
+          title: tab.title || "",
+        })
+      );
 
-      // タブ状態を保存
-      this.tabStates.set(tabId, tabState);
-
-      console.log(`YouTube Theater Mode: Tab ${tabId} registered`, tabState);
+      if (this.logger) {
+        this.logger.debug(
+          `Tab ${tabId} ${isRegistered ? "updated" : "registered"}`,
+          {
+            url: tab.url,
+            title: tab.title,
+          }
+        );
+      }
 
       // タブにメッセージを送信して状態を同期
-      this.notifyTab(tabId, {
-        action: "syncState",
-        state: tabState,
-      });
+      await this.notifyTab(tabId);
     } catch (error) {
-      console.error(
-        `YouTube Theater Mode: Error registering tab ${tabId}`,
-        error
-      );
+      if (this.logger) {
+        this.logger.error(`Error registering tab ${tabId}`, error);
+      }
+
+      if (this.errorHandler) {
+        this.errorHandler.handleError(error, {
+          context: { operation: "registerTab", tabId, tab },
+        });
+      }
     }
   }
 
@@ -154,20 +266,23 @@ class TabStateManager {
    * タブの登録を解除
    * @param {number} tabId - タブID
    */
-  unregisterTab(tabId) {
-    if (this.tabStates.has(tabId)) {
-      this.tabStates.delete(tabId);
-      console.log(`YouTube Theater Mode: Tab ${tabId} unregistered`);
+  async unregisterTab(tabId) {
+    try {
+      // タブ登録解除アクションをディスパッチ
+      await this.stateStore.dispatch(ActionCreator.unregisterTab(tabId));
 
-      // アクティブタブが削除された場合
-      if (this.activeTabId === tabId) {
-        this.activeTabId = null;
+      if (this.logger) {
+        this.logger.debug(`Tab ${tabId} unregistered`);
+      }
+    } catch (error) {
+      if (this.logger) {
+        this.logger.error(`Error unregistering tab ${tabId}`, error);
+      }
 
-        // 他のYouTubeタブがあれば、最初のものをアクティブにする
-        if (this.tabStates.size > 0) {
-          const nextTabId = Array.from(this.tabStates.keys())[0];
-          this.setActiveTab(nextTabId);
-        }
+      if (this.errorHandler) {
+        this.errorHandler.handleError(error, {
+          context: { operation: "unregisterTab", tabId },
+        });
       }
     }
   }
@@ -176,26 +291,25 @@ class TabStateManager {
    * アクティブタブを設定
    * @param {number} tabId - タブID
    */
-  setActiveTab(tabId) {
-    const previousActiveTabId = this.activeTabId;
-    this.activeTabId = tabId;
+  async activateTab(tabId) {
+    try {
+      // タブアクティブ化アクションをディスパッチ
+      await this.stateStore.dispatch(ActionCreator.activateTab(tabId));
 
-    // 以前のアクティブタブの状態を更新
-    if (previousActiveTabId && this.tabStates.has(previousActiveTabId)) {
-      const prevTabState = this.tabStates.get(previousActiveTabId);
-      prevTabState.isActive = false;
-      this.tabStates.set(previousActiveTabId, prevTabState);
+      if (this.logger) {
+        this.logger.debug(`Active tab set to ${tabId}`);
+      }
+    } catch (error) {
+      if (this.logger) {
+        this.logger.error(`Error activating tab ${tabId}`, error);
+      }
+
+      if (this.errorHandler) {
+        this.errorHandler.handleError(error, {
+          context: { operation: "activateTab", tabId },
+        });
+      }
     }
-
-    // 新しいアクティブタブの状態を更新
-    if (this.tabStates.has(tabId)) {
-      const tabState = this.tabStates.get(tabId);
-      tabState.isActive = true;
-      tabState.lastSync = Date.now();
-      this.tabStates.set(tabId, tabState);
-    }
-
-    console.log(`YouTube Theater Mode: Active tab set to ${tabId}`);
   }
 
   /**
@@ -204,47 +318,87 @@ class TabStateManager {
    */
   async syncTabState(tabId) {
     try {
-      if (!this.tabStates.has(tabId)) {
-        console.warn(`YouTube Theater Mode: Cannot sync unknown tab ${tabId}`);
+      // 同期ロックを取得
+      if (!this.acquireLock(`sync:${tabId}`)) {
+        if (this.logger) {
+          this.logger.debug(
+            `Sync for tab ${tabId} is already in progress, skipping`
+          );
+        }
         return;
       }
 
-      const tabState = this.tabStates.get(tabId);
-
-      // 設定を読み込み
-      const settings = await this.loadSettings();
-
-      // 設定から状態を更新
-      tabState.theaterModeEnabled = settings.theaterModeEnabled;
-      tabState.opacity = settings.opacity;
-      tabState.lastSync = Date.now();
-
-      // 更新した状態を保存
-      this.tabStates.set(tabId, tabState);
-
-      console.log(`YouTube Theater Mode: Tab ${tabId} state synced`, tabState);
+      // タブ同期アクションをディスパッチ
+      await this.stateStore.dispatch(ActionCreator.syncTab(tabId));
 
       // タブにメッセージを送信して状態を同期
-      this.notifyTab(tabId, {
-        action: "syncState",
-        state: tabState,
-      });
+      await this.notifyTab(tabId);
+
+      if (this.logger) {
+        this.logger.debug(`Tab ${tabId} state synced`);
+      }
+
+      // ロックを解放
+      this.releaseLock(`sync:${tabId}`);
     } catch (error) {
-      console.error(`YouTube Theater Mode: Error syncing tab ${tabId}`, error);
+      // ロックを解放
+      this.releaseLock(`sync:${tabId}`);
+
+      if (this.logger) {
+        this.logger.error(`Error syncing tab ${tabId}`, error);
+      }
+
+      if (this.errorHandler) {
+        this.errorHandler.handleError(error, {
+          context: { operation: "syncTabState", tabId },
+        });
+      }
     }
   }
 
   /**
    * 全てのタブの状態を同期
    */
-  syncAllTabs() {
-    for (const tabId of this.tabStates.keys()) {
-      this.syncTabState(tabId);
-    }
+  async syncAllTabs() {
+    try {
+      // 同期ロックを取得
+      if (!this.acquireLock("syncAll")) {
+        if (this.logger) {
+          this.logger.debug(
+            "Sync for all tabs is already in progress, skipping"
+          );
+        }
+        return;
+      }
 
-    console.log(
-      `YouTube Theater Mode: All tabs (${this.tabStates.size}) synced`
-    );
+      const state = this.stateStore.getState();
+      const tabIds = Array.from(state.tabs.tabStates.keys());
+
+      if (this.logger) {
+        this.logger.debug(`Syncing all tabs (${tabIds.length})`);
+      }
+
+      // 各タブを同期
+      for (const tabId of tabIds) {
+        await this.syncTabState(tabId);
+      }
+
+      // ロックを解放
+      this.releaseLock("syncAll");
+    } catch (error) {
+      // ロックを解放
+      this.releaseLock("syncAll");
+
+      if (this.logger) {
+        this.logger.error("Error syncing all tabs", error);
+      }
+
+      if (this.errorHandler) {
+        this.errorHandler.handleError(error, {
+          context: { operation: "syncAllTabs" },
+        });
+      }
+    }
   }
 
   /**
@@ -258,17 +412,20 @@ class TabStateManager {
 
     // 新しいインターバルを設定
     this.syncInterval = setInterval(() => {
-      if (this.tabStates.size > 0) {
-        console.log(
-          `YouTube Theater Mode: Periodic sync for ${this.tabStates.size} tabs`
-        );
+      const state = this.stateStore.getState();
+      if (state.tabs.tabStates.size > 0) {
+        if (this.logger) {
+          this.logger.debug(
+            `Periodic sync for ${state.tabs.tabStates.size} tabs`
+          );
+        }
         this.syncAllTabs();
       }
     }, this.syncIntervalTime);
 
-    console.log(
-      `YouTube Theater Mode: Periodic sync started (${this.syncIntervalTime}ms)`
-    );
+    if (this.logger) {
+      this.logger.info(`Periodic sync started (${this.syncIntervalTime}ms)`);
+    }
   }
 
   /**
@@ -278,68 +435,79 @@ class TabStateManager {
     if (this.syncInterval) {
       clearInterval(this.syncInterval);
       this.syncInterval = null;
-      console.log("YouTube Theater Mode: Periodic sync stopped");
+
+      if (this.logger) {
+        this.logger.info("Periodic sync stopped");
+      }
     }
   }
 
   /**
    * タブにメッセージを送信
    * @param {number} tabId - タブID
-   * @param {Object} message - 送信するメッセージ
    */
-  notifyTab(tabId, message) {
+  async notifyTab(tabId) {
     if (typeof chrome === "undefined" || !chrome.tabs) {
       return;
     }
 
-    chrome.tabs.sendMessage(tabId, message, (response) => {
-      if (chrome.runtime.lastError) {
-        console.warn(
-          `YouTube Theater Mode: Error sending message to tab ${tabId}`,
-          chrome.runtime.lastError
-        );
-        return;
-      }
+    try {
+      const state = this.stateStore.getState();
 
-      if (response) {
-        console.log(`YouTube Theater Mode: Tab ${tabId} response:`, response);
-      }
-    });
-  }
-
-  /**
-   * 設定を読み込み
-   * @returns {Promise<Object>} 設定オブジェクト
-   */
-  async loadSettings() {
-    return new Promise((resolve) => {
-      if (
-        typeof chrome === "undefined" ||
-        !chrome.storage ||
-        !chrome.storage.sync
-      ) {
-        resolve({
-          theaterModeEnabled: false,
-          opacity: 0.7,
-        });
-        return;
-      }
-
-      chrome.storage.sync.get(null, (result) => {
-        if (chrome.runtime.lastError) {
-          console.warn(
-            "YouTube Theater Mode: Error loading settings",
-            chrome.runtime.lastError
-          );
-          resolve({
-            theaterModeEnabled: false,
-            opacity: 0.7,
-          });
-        } else {
-          resolve(result);
+      // タブが存在するか確認
+      if (!state.tabs.tabStates.has(tabId)) {
+        if (this.logger) {
+          this.logger.warn(`Cannot notify unknown tab ${tabId}`);
         }
+        return;
+      }
+
+      const tabState = state.tabs.tabStates.get(tabId);
+
+      // メッセージを送信
+      await new Promise((resolve) => {
+        chrome.tabs.sendMessage(
+          tabId,
+          {
+            action: "syncState",
+            state: {
+              theaterModeEnabled: state.theaterMode.isEnabled,
+              opacity: state.theaterMode.opacity,
+              isActive: tabState.isActive,
+              lastSync: tabState.lastSync,
+            },
+          },
+          (response) => {
+            if (chrome.runtime.lastError) {
+              if (this.logger) {
+                this.logger.warn(
+                  `Error sending message to tab ${tabId}`,
+                  chrome.runtime.lastError
+                );
+              }
+              resolve();
+              return;
+            }
+
+            if (this.logger && response) {
+              this.logger.debug(`Tab ${tabId} response:`, response);
+            }
+
+            resolve(response);
+          }
+        );
       });
-    });
+    } catch (error) {
+      if (this.logger) {
+        this.logger.error(`Error notifying tab ${tabId}`, error);
+      }
+
+      if (this.errorHandler) {
+        this.errorHandler.handleError(error, {
+          context: { operation: "notifyTab", tabId },
+        });
+      }
+    }
   }
 
   /**
@@ -349,71 +517,39 @@ class TabStateManager {
    */
   async updateTabState(tabId, stateUpdate) {
     try {
-      if (!this.tabStates.has(tabId)) {
-        console.warn(
-          `YouTube Theater Mode: Cannot update unknown tab ${tabId}`
-        );
+      const state = this.stateStore.getState();
+
+      // タブが存在するか確認
+      if (!state.tabs.tabStates.has(tabId)) {
+        if (this.logger) {
+          this.logger.warn(`Cannot update unknown tab ${tabId}`);
+        }
         return false;
       }
 
-      const tabState = this.tabStates.get(tabId);
+      // タブ更新アクションをディスパッチ
+      await this.stateStore.dispatch(
+        ActionCreator.updateTab(tabId, stateUpdate)
+      );
 
-      // 状態を更新
-      Object.assign(tabState, stateUpdate, { lastSync: Date.now() });
-
-      // 更新した状態を保存
-      this.tabStates.set(tabId, tabState);
-
-      console.log(`YouTube Theater Mode: Tab ${tabId} state updated`, tabState);
-
-      // シアターモードの状態が変更された場合は設定も更新
-      if (stateUpdate.theaterModeEnabled !== undefined) {
-        await this.saveSettings({
-          theaterModeEnabled: stateUpdate.theaterModeEnabled,
-        });
-      }
-
-      // 透明度が変更された場合は設定も更新
-      if (stateUpdate.opacity !== undefined) {
-        await this.saveSettings({ opacity: stateUpdate.opacity });
+      if (this.logger) {
+        this.logger.debug(`Tab ${tabId} state updated`, stateUpdate);
       }
 
       return true;
     } catch (error) {
-      console.error(`YouTube Theater Mode: Error updating tab ${tabId}`, error);
-      return false;
-    }
-  }
-
-  /**
-   * 設定を保存
-   * @param {Object} settings - 保存する設定
-   * @returns {Promise<boolean>} 成功時true
-   */
-  async saveSettings(settings) {
-    return new Promise((resolve) => {
-      if (
-        typeof chrome === "undefined" ||
-        !chrome.storage ||
-        !chrome.storage.sync
-      ) {
-        resolve(false);
-        return;
+      if (this.logger) {
+        this.logger.error(`Error updating tab ${tabId}`, error);
       }
 
-      chrome.storage.sync.set(settings, () => {
-        if (chrome.runtime.lastError) {
-          console.warn(
-            "YouTube Theater Mode: Error saving settings",
-            chrome.runtime.lastError
-          );
-          resolve(false);
-        } else {
-          console.log("YouTube Theater Mode: Settings saved", settings);
-          resolve(true);
-        }
-      });
-    });
+      if (this.errorHandler) {
+        this.errorHandler.handleError(error, {
+          context: { operation: "updateTabState", tabId, stateUpdate },
+        });
+      }
+
+      return false;
+    }
   }
 
   /**
@@ -422,7 +558,10 @@ class TabStateManager {
    * @returns {Object|null} タブの状態またはnull
    */
   getTabState(tabId) {
-    return this.tabStates.has(tabId) ? { ...this.tabStates.get(tabId) } : null;
+    const state = this.stateStore.getState();
+    return state.tabs.tabStates.has(tabId)
+      ? { ...state.tabs.tabStates.get(tabId) }
+      : null;
   }
 
   /**
@@ -430,10 +569,13 @@ class TabStateManager {
    * @returns {Object} タブIDをキーとする状態オブジェクト
    */
   getAllTabStates() {
+    const state = this.stateStore.getState();
     const states = {};
-    for (const [tabId, state] of this.tabStates.entries()) {
-      states[tabId] = { ...state };
+
+    for (const [tabId, tabState] of state.tabs.tabStates.entries()) {
+      states[tabId] = { ...tabState };
     }
+
     return states;
   }
 
@@ -442,9 +584,61 @@ class TabStateManager {
    * @returns {Object|null} アクティブタブの状態またはnull
    */
   getActiveTabState() {
-    return this.activeTabId && this.tabStates.has(this.activeTabId)
-      ? { ...this.tabStates.get(this.activeTabId) }
+    const state = this.stateStore.getState();
+    return state.tabs.activeTabId &&
+      state.tabs.tabStates.has(state.tabs.activeTabId)
+      ? { ...state.tabs.tabStates.get(state.tabs.activeTabId) }
       : null;
+  }
+
+  /**
+   * ロックを取得
+   * @param {string} lockId - ロックID
+   * @returns {boolean} ロック取得成功かどうか
+   * @private
+   */
+  acquireLock(lockId) {
+    const now = Date.now();
+
+    // 既存のロックをチェック
+    if (this.locks.has(lockId)) {
+      const lockTime = this.locks.get(lockId);
+
+      // ロックがタイムアウトしていない場合
+      if (now - lockTime < this.lockTimeout) {
+        return false;
+      }
+
+      // タイムアウトしたロックを解放
+      if (this.logger) {
+        this.logger.warn(`Lock ${lockId} timed out, releasing`);
+      }
+    }
+
+    // ロックを取得
+    this.locks.set(lockId, now);
+    return true;
+  }
+
+  /**
+   * ロックを解放
+   * @param {string} lockId - ロックID
+   * @private
+   */
+  releaseLock(lockId) {
+    this.locks.delete(lockId);
+  }
+
+  /**
+   * リソースをクリーンアップ
+   */
+  dispose() {
+    this.stopPeriodicSync();
+    this.locks.clear();
+
+    if (this.logger) {
+      this.logger.info("TabStateManager disposed");
+    }
   }
 }
 

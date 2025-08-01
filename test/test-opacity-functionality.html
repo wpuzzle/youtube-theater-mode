@@ -1,168 +1,304 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Opacity Functionality Tests - YouTube Theater Mode</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OpacityController テスト</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: #f5f5f5;
-        }
-        .test-container {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        .test-result {
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 4px;
-            font-weight: bold;
-        }
-        .test-pass {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .test-fail {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        .test-info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        .controls {
-            margin: 20px 0;
-        }
-        button {
-            padding: 10px 20px;
-            margin: 5px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .btn-primary {
-            background-color: #007bff;
-            color: white;
-        }
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-        }
-        .btn-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-        .opacity-demo {
-            position: relative;
-            width: 300px;
-            height: 200px;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            border-radius: 8px;
-            margin: 20px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
-        }
-        .opacity-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.7);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            transition: background-color 0.3s ease;
-        }
-        .opacity-controls {
-            margin: 20px 0;
-        }
-        .opacity-slider {
-            width: 100%;
-            margin: 10px 0;
-        }
-        .opacity-value {
-            font-weight: bold;
-            color: #007bff;
-        }
-        .settings-display {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 4px;
-            margin: 10px 0;
-            font-family: monospace;
-            white-space: pre-wrap;
-        }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      h1 {
+        color: #333;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+      #results {
+        background-color: #f5f5f5;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 20px;
+        white-space: pre-wrap;
+        font-family: monospace;
+        max-height: 500px;
+        overflow-y: auto;
+      }
+      .success {
+        color: #2e7d32;
+      }
+      .error {
+        color: #c62828;
+      }
+      .demo-area {
+        margin-top: 30px;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+      }
+      .demo-area h3 {
+        margin-top: 0;
+      }
+      .demo-box {
+        width: 100%;
+        height: 200px;
+        background-color: #333;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 24px;
+        position: relative;
+        overflow: hidden;
+      }
+      .demo-content {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("https://via.placeholder.com/800x400/333333/FFFFFF?text=Background+Content");
+        background-size: cover;
+        z-index: 1;
+      }
+      .demo-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, var(--demo-opacity));
+        z-index: 2;
+        transition: background-color 0.3s ease;
+      }
+      .demo-text {
+        position: relative;
+        z-index: 3;
+      }
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      .control-button {
+        padding: 8px 16px;
+        background-color: #4285f4;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .control-button:hover {
+        background-color: #3367d6;
+      }
+      .opacity-value {
+        font-weight: bold;
+        margin-left: 10px;
+      }
     </style>
-</head>
-<body>
-    <h1>Opacity Functionality Tests - YouTube Theater Mode</h1>
-    
-    <div class="test-container">
-        <h2>透明度機能テスト</h2>
-        <div class="controls">
-            <button class="btn-primary" onclick="runAllOpacityTests()">全テスト実行</button>
-            <button class="btn-secondary" onclick="clearResults()">結果クリア</button>
-        </div>
-        <div id="test-results"></div>
+  </head>
+  <body>
+    <h1>OpacityController テスト</h1>
+    <p>このページは OpacityController クラスの単体テストを実行します。</p>
+    <p>テスト結果はコンソールに出力されます。</p>
+
+    <div id="results">テスト実行中...</div>
+
+    <div class="demo-area">
+      <h3>透明度デモ</h3>
+      <p>以下のコントロールを使用して透明度を調整できます：</p>
+
+      <div class="controls">
+        <button id="decrease" class="control-button">
+          透明度を下げる (-10%)
+        </button>
+        <button id="increase" class="control-button">
+          透明度を上げる (+10%)
+        </button>
+        <button id="reset" class="control-button">リセット (70%)</button>
+        <span class="opacity-value"
+          >現在の透明度: <span id="opacity-value">70%</span></span
+        >
+      </div>
+
+      <div class="demo-box">
+        <div class="demo-content"></div>
+        <div class="demo-overlay"></div>
+        <div class="demo-text">オーバーレイ透明度デモ</div>
+      </div>
     </div>
 
-    <div class="test-container">
-        <h2>透明度デモ</h2>
-        <div class="opacity-demo">
-            <div>背景コンテンツ</div>
-            <div id="demo-overlay" class="opacity-overlay">
-                オーバーレイ (透明度: <span id="demo-opacity-value">70%</span>)
-            </div>
-        </div>
-        
-        <div class="opacity-controls">
-            <label for="opacity-slider">透明度調整:</label>
-            <input type="range" id="opacity-slider" class="opacity-slider" 
-                   min="0" max="90" value="70" step="5"
-                   oninput="updateDemoOpacity(this.value)">
-            <div>現在の透明度: <span id="current-opacity" class="opacity-value">70%</span></div>
-        </div>
-        
-        <div class="controls">
-            <button class="btn-primary" onclick="testOpacityChange(50)">50%に設定</button>
-            <button class="btn-primary" onclick="testOpacityChange(70)">70%に設定 (デフォルト)</button>
-            <button class="btn-primary" onclick="testOpacityChange(90)">90%に設定</button>
-            <button class="btn-secondary" onclick="resetToDefault()">デフォルトに戻す</button>
-        </div>
-    </div>
+    <!-- 依存ライブラリ -->
+    <script src="../infrastructure/logger.js"></script>
+    <script src="../infrastructure/error-handler.js"></script>
+    <script src="../infrastructure/state-store.js"></script>
 
-    <div class="test-container">
-        <h2>現在の設定状態</h2>
-        <div id="current-settings" class="settings-display">設定を読み込み中...</div>
-        <button class="btn-secondary" onclick="displayCurrentSettings()">設定を更新</button>
-    </div>
+    <!-- テスト対象 -->
+    <script src="../opacity-controller.js"></script>
 
-    <div class="test-container">
-        <h2>手動テスト</h2>
-        <div class="controls">
-            <button class="btn-primary" onclick="testDynamicOpacityChange()">動的透明度変更テスト</button>
-            <button class="btn-primary" onclick="testOpacityPersistence()">透明度永続化テスト</button>
-            <button class="btn-primary" onclick="testOpacityValidation()">透明度バリデーションテスト</button>
-            <button class="btn-primary" onclick="testImmediateReflection()">即座反映テスト</button>
-        </div>
-    </div>
+    <!-- テストスクリプト -->
+    <script src="./test-opacity-functionality.js"></script>
 
-    <script src="test-opacity-functionality.js"></script>
-</body>
+    <script>
+      // コンソール出力をキャプチャしてページに表示
+      const resultsDiv = document.getElementById("results");
+      const originalConsole = {
+        log: console.log,
+        error: console.error,
+        warn: console.warn,
+        assert: console.assert,
+      };
+
+      let testOutput = "";
+
+      console.log = function (...args) {
+        originalConsole.log(...args);
+        testOutput += args.join(" ") + "\n";
+        resultsDiv.textContent = testOutput;
+      };
+
+      console.error = function (...args) {
+        originalConsole.error(...args);
+        testOutput += "❌ ERROR: " + args.join(" ") + "\n";
+        resultsDiv.textContent = testOutput;
+        resultsDiv.classList.add("error");
+      };
+
+      console.warn = function (...args) {
+        originalConsole.warn(...args);
+        testOutput += "⚠️ WARNING: " + args.join(" ") + "\n";
+        resultsDiv.textContent = testOutput;
+      };
+
+      console.assert = function (condition, ...args) {
+        if (!condition) {
+          originalConsole.assert(condition, ...args);
+          testOutput += "❌ ASSERTION FAILED: " + args.join(" ") + "\n";
+          resultsDiv.textContent = testOutput;
+          resultsDiv.classList.add("error");
+        }
+      };
+
+      // デモ用のコントローラー
+      window.addEventListener("load", function () {
+        // 自動テスト完了時の処理
+        setTimeout(function () {
+          if (!testOutput.includes("FAILED") && !testOutput.includes("ERROR")) {
+            resultsDiv.classList.add("success");
+            testOutput += "\n✅ All tests completed successfully!";
+            resultsDiv.textContent = testOutput;
+          }
+
+          // デモ用のコントローラーをセットアップ
+          setupDemo();
+        }, 1000);
+      });
+
+      function setupDemo() {
+        // ActionCreator モック
+        window.ActionCreator = {
+          updateOpacity: (opacity) => ({
+            type: "OPACITY_UPDATE",
+            payload: { opacity },
+          }),
+        };
+
+        // ロガーモック
+        const logger = {
+          debug: (...args) => originalConsole.log("[DEBUG]", ...args),
+          info: (...args) => originalConsole.log("[INFO]", ...args),
+          warn: (...args) => originalConsole.log("[WARN]", ...args),
+          error: (...args) => originalConsole.log("[ERROR]", ...args),
+        };
+
+        // エラーハンドラーモック
+        const errorHandler = {
+          wrapSync: (fn) => {
+            try {
+              const result = fn();
+              return {
+                isSuccess: () => true,
+                isFailure: () => false,
+                data: result,
+              };
+            } catch (error) {
+              return { isSuccess: () => false, isFailure: () => true, error };
+            }
+          },
+          wrapAsync: (fn) => {
+            return Promise.resolve(fn())
+              .then((result) => ({
+                isSuccess: () => true,
+                isFailure: () => false,
+                data: result,
+              }))
+              .catch((error) => ({
+                isSuccess: () => false,
+                isFailure: () => true,
+                error,
+              }));
+          },
+        };
+
+        // 透明度コントローラーを作成
+        const controller = new OpacityController({ logger, errorHandler });
+        controller.initialize();
+
+        // デモ要素
+        const demoOverlay = document.querySelector(".demo-overlay");
+        const opacityValue = document.getElementById("opacity-value");
+
+        // 初期値を設定
+        document.documentElement.style.setProperty(
+          "--demo-opacity",
+          controller.currentOpacity
+        );
+        updateOpacityDisplay(controller.currentOpacity);
+
+        // ボタンイベントを設定
+        document.getElementById("decrease").addEventListener("click", () => {
+          const result = controller.decreaseOpacity();
+          if (result.isSuccess()) {
+            document.documentElement.style.setProperty(
+              "--demo-opacity",
+              controller.currentOpacity
+            );
+            updateOpacityDisplay(controller.currentOpacity);
+          }
+        });
+
+        document.getElementById("increase").addEventListener("click", () => {
+          const result = controller.increaseOpacity();
+          if (result.isSuccess()) {
+            document.documentElement.style.setProperty(
+              "--demo-opacity",
+              controller.currentOpacity
+            );
+            updateOpacityDisplay(controller.currentOpacity);
+          }
+        });
+
+        document.getElementById("reset").addEventListener("click", () => {
+          const result = controller.resetOpacity();
+          if (result.isSuccess()) {
+            document.documentElement.style.setProperty(
+              "--demo-opacity",
+              controller.currentOpacity
+            );
+            updateOpacityDisplay(controller.currentOpacity);
+          }
+        });
+
+        function updateOpacityDisplay(opacity) {
+          opacityValue.textContent = `${Math.round(opacity * 100)}%`;
+        }
+      }
+    </script>
+  </body>
 </html>

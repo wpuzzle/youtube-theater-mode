@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ResourceManager Tests - YouTube Theater Mode</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f8f9fa;
+        color: #333;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: linear-gradient(135deg, #007acc, #0056b3);
+        color: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 2.5em;
+        font-weight: 300;
+      }
+
+      .header p {
+        margin: 10px 0 0 0;
+        opacity: 0.9;
+        font-size: 1.1em;
+      }
+
+      .info-section {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .info-section h3 {
+        margin-top: 0;
+        color: #007acc;
+        border-bottom: 2px solid #e9ecef;
+        padding-bottom: 10px;
+      }
+
+      .test-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 15px;
+        margin: 20px 0;
+      }
+
+      .feature-card {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 6px;
+        border-left: 4px solid #007acc;
+      }
+
+      .feature-card h4 {
+        margin: 0 0 10px 0;
+        color: #495057;
+      }
+
+      .feature-card ul {
+        margin: 0;
+        padding-left: 20px;
+      }
+
+      .feature-card li {
+        margin-bottom: 5px;
+        color: #6c757d;
+      }
+
+      .status-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 8px;
+      }
+
+      .status-loading {
+        background-color: #ffc107;
+        animation: pulse 1.5s infinite;
+      }
+
+      .status-ready {
+        background-color: #28a745;
+      }
+
+      .status-error {
+        background-color: #dc3545;
+      }
+
+      @keyframes pulse {
+        0% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 40px;
+        padding: 20px;
+        color: #6c757d;
+        font-size: 0.9em;
+      }
+
+      .loading-message {
+        text-align: center;
+        padding: 20px;
+        font-size: 1.1em;
+        color: #007acc;
+      }
+
+      code {
+        background-color: #f8f9fa;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: "Courier New", monospace;
+        color: #e83e8c;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>🧪 ResourceManager Tests</h1>
+      <p>YouTube Theater Mode Extension - Performance Optimization Component</p>
+    </div>
+
+    <div class="info-section">
+      <h3>📋 Test Overview</h3>
+      <p>
+        This test suite validates the <code>ResourceManager</code> class, which
+        is responsible for automatic resource management and memory leak
+        prevention in the YouTube Theater Mode extension.
+      </p>
+
+      <div class="test-features">
+        <div class="feature-card">
+          <h4>🔧 Basic Functionality</h4>
+          <ul>
+            <li>Resource registration and disposal</li>
+            <li>Resource information retrieval</li>
+            <li>Resource state management</li>
+            <li>Cleanup function execution</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h4>🎯 Specialized Resource Types</h4>
+          <ul>
+            <li>Event listener management</li>
+            <li>Observer (MutationObserver, etc.) management</li>
+            <li>Timer (setTimeout/setInterval) management</li>
+            <li>Promise with AbortController management</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h4>🧹 Automatic Cleanup</h4>
+          <ul>
+            <li>Expired resource disposal (TTL-based)</li>
+            <li>Unused resource disposal (auto-dispose)</li>
+            <li>Type-based bulk disposal</li>
+            <li>Complete cleanup on shutdown</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <h4>📊 Monitoring & Alerts</h4>
+          <ul>
+            <li>Resource usage statistics</li>
+            <li>Memory usage monitoring</li>
+            <li>Resource count alerts</li>
+            <li>Error handling and logging</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <h3>🚀 Test Execution</h3>
+      <p>
+        <span
+          id="status-indicator"
+          class="status-indicator status-loading"
+        ></span>
+        <span id="status-text">Loading test environment...</span>
+      </p>
+      <p>
+        The test runner will automatically load the required dependencies and
+        provide an interactive interface to run the test suite. Tests include
+        both unit tests and performance benchmarks.
+      </p>
+    </div>
+
+    <div id="test-container">
+      <div class="loading-message">
+        <p>🔄 Setting up test environment...</p>
+        <p>
+          Please wait while we load the ResourceManager and test dependencies.
+        </p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>
+        <strong>YouTube Theater Mode Extension</strong><br />
+        ResourceManager Component Tests<br />
+        <em>Performance Optimization & Memory Management</em>
+      </p>
+    </div>
+
+    <script src="./run-resource-manager-tests.js"></script>
+
+    <script>
+      // ステータス更新用のヘルパー関数
+      function updateStatus(status, text) {
+        const indicator = document.getElementById("status-indicator");
+        const statusText = document.getElementById("status-text");
+
+        if (indicator && statusText) {
+          indicator.className = `status-indicator status-${status}`;
+          statusText.textContent = text;
+        }
+      }
+
+      // 初期化完了を監視
+      let checkInterval = setInterval(() => {
+        if (
+          typeof ResourceManager !== "undefined" &&
+          typeof runResourceManagerTests !== "undefined"
+        ) {
+          updateStatus(
+            "ready",
+            'Test environment ready! Click "Run Tests" to begin.'
+          );
+          clearInterval(checkInterval);
+
+          // ローディングメッセージを削除
+          const testContainer = document.getElementById("test-container");
+          const loadingMessage =
+            testContainer.querySelector(".loading-message");
+          if (loadingMessage) {
+            loadingMessage.remove();
+          }
+        }
+      }, 100);
+
+      // タイムアウト処理
+      setTimeout(() => {
+        if (
+          typeof ResourceManager === "undefined" ||
+          typeof runResourceManagerTests === "undefined"
+        ) {
+          updateStatus(
+            "error",
+            "Failed to load test environment. Please check console for errors."
+          );
+          clearInterval(checkInterval);
+
+          const testContainer = document.getElementById("test-container");
+          testContainer.innerHTML = `
+                    <div class="info-section" style="border-left: 4px solid #dc3545;">
+                        <h3 style="color: #dc3545;">❌ Test Environment Setup Failed</h3>
+                        <p>
+                            The test environment could not be initialized. This may be due to:
+                        </p>
+                        <ul>
+                            <li>Missing or incorrect file paths</li>
+                            <li>JavaScript loading errors</li>
+                            <li>Browser security restrictions</li>
+                        </ul>
+                        <p>
+                            Please check the browser console for detailed error messages and ensure 
+                            all required files are present in the correct locations.
+                        </p>
+                    </div>
+                `;
+        }
+      }, 5000);
+
+      // グローバルエラーハンドリング
+      window.addEventListener("error", (event) => {
+        console.error("Global error in test page:", event.error);
+        updateStatus(
+          "error",
+          "Error occurred during test setup. Check console for details."
+        );
+      });
+
+      // Promise rejection ハンドリング
+      window.addEventListener("unhandledrejection", (event) => {
+        console.error(
+          "Unhandled promise rejection in test page:",
+          event.reason
+        );
+        updateStatus(
+          "error",
+          "Promise rejection occurred. Check console for details."
+        );
+      });
+    </script>
+  </body>
+</html>

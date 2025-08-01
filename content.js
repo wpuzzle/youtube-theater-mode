@@ -3,20 +3,47 @@
  * YouTube ページでシアターモード機能を提供するメインスクリプト
  */
 
-// シアターモードコントローラークラス
+/**
+ * シアターモードコントローラークラス
+ * YouTube ページでのシアターモード機能を管理
+ *
+ * @class TheaterModeController
+ */
 class TheaterModeController {
+  /**
+   * TheaterModeControllerインスタンスを作成
+   *
+   * @constructor
+   */
   constructor() {
+    /** @type {boolean} シアターモードの有効状態 */
     this.isTheaterModeActive = false;
+
+    /** @type {number} 現在の透明度 (0-0.9) */
     this.currentOpacity = 0.7; // デフォルト透明度 70%
+
+    /** @type {HTMLElement|null} 切り替えボタン要素 */
     this.toggleButton = null;
+
+    /** @type {Array<HTMLElement>} オーバーレイが適用された要素の配列 */
     this.overlayElements = [];
+
+    /** @type {boolean} 初期化完了フラグ */
     this.initialized = false;
+
+    /** @type {Object|null} 現在の設定 */
     this.settings = null;
+
+    /** @type {SettingsManager|null} 設定管理インスタンス */
     this.settingsManager = null;
   }
 
   /**
    * コントローラーを初期化
+   * 設定の読み込み、動画プレーヤーの検出、キーボードショートカットの設定を行う
+   *
+   * @async
+   * @returns {Promise<boolean>} 初期化が成功した場合はtrue、失敗した場合はfalse
    */
   async initialize() {
     console.log("YouTube Theater Mode: コントローラー初期化開始");
@@ -89,6 +116,9 @@ class TheaterModeController {
 
   /**
    * ボタンクリック処理
+   * シアターモードの切り替えを実行
+   *
+   * @method handleButtonClick
    */
   handleButtonClick() {
     console.log("YouTube Theater Mode: Button clicked");
@@ -97,6 +127,9 @@ class TheaterModeController {
 
   /**
    * ボタンアイコンを更新
+   * シアターモードの状態に応じてアイコンを変更
+   *
+   * @method updateButtonIcon
    */
   updateButtonIcon() {
     if (!this.toggleButton) return;
@@ -119,6 +152,9 @@ class TheaterModeController {
 
   /**
    * ボタンの状態を更新
+   * シアターモードの状態に応じてボタンの外観とツールチップを更新
+   *
+   * @method updateButtonState
    */
   updateButtonState() {
     // ボタンが削除されたため、何もしない
@@ -131,6 +167,9 @@ class TheaterModeController {
 
   /**
    * スクリーンリーダー向けに状態変更を通知
+   * アクセシビリティ対応として、視覚的な変更を音声で通知
+   *
+   * @method announceStateChange
    * @param {string} message - 通知メッセージ
    */
   announceStateChange(message) {
@@ -165,6 +204,9 @@ class TheaterModeController {
 
   /**
    * ボタンを削除
+   * 切り替えボタンをDOMから削除し、参照をクリア
+   *
+   * @method removeToggleButton
    */
   removeToggleButton() {
     if (this.toggleButton && this.toggleButton.parentNode) {
@@ -175,6 +217,9 @@ class TheaterModeController {
 
   /**
    * キーボードショートカットを設定
+   * Ctrl+Shift+T でシアターモードを切り替えるイベントリスナーを追加
+   *
+   * @method setupKeyboardShortcuts
    */
   setupKeyboardShortcuts() {
     document.addEventListener("keydown", (event) => {
@@ -187,7 +232,11 @@ class TheaterModeController {
 
   /**
    * シアターモードを切り替え
-   * @returns {Promise<boolean>} 切り替え後の状態
+   * 現在の状態に応じてシアターモードを有効化または無効化
+   *
+   * @async
+   * @method toggleTheaterMode
+   * @returns {Promise<boolean>} 切り替え後の状態（true: 有効, false: 無効）
    */
   async toggleTheaterMode() {
     try {
@@ -208,6 +257,10 @@ class TheaterModeController {
 
   /**
    * シアターモードを有効化
+   * オーバーレイを適用してシアターモードを開始
+   *
+   * @async
+   * @method enableTheaterMode
    */
   async enableTheaterMode() {
     if (this.isTheaterModeActive) return;

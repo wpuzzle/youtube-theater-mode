@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DataValidator Tests</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        line-height: 1.6;
+      }
+      h1 {
+        color: #333;
+      }
+      .test-results {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #f9f9f9;
+      }
+      .success {
+        color: green;
+      }
+      .failure {
+        color: red;
+      }
+      .test-log {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: #f5f5f5;
+        height: 300px;
+        overflow-y: auto;
+        font-family: monospace;
+        white-space: pre-wrap;
+      }
+      button {
+        padding: 8px 16px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        margin-right: 10px;
+      }
+      button:hover {
+        background-color: #45a049;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>DataValidator Tests</h1>
+
+    <div>
+      <button id="runTests">Run All Tests</button>
+      <button id="clearLog">Clear Log</button>
+    </div>
+
+    <div class="test-results" id="testResults">
+      <p>Click "Run All Tests" to start testing.</p>
+    </div>
+
+    <h2>Test Log</h2>
+    <div class="test-log" id="testLog"></div>
+
+    <!-- 依存ライブラリ -->
+    <script src="../infrastructure/logger.js"></script>
+    <script src="../infrastructure/error-handler.js"></script>
+    <script src="../infrastructure/data-validator.js"></script>
+
+    <!-- テストスクリプト -->
+    <script src="test-data-validator.js"></script>
+
+    <script>
+      // コンソール出力をキャプチャ
+      const originalConsole = {
+        log: console.log,
+        error: console.error,
+        warn: console.warn,
+        assert: console.assert,
+      };
+
+      const testLog = document.getElementById("testLog");
+      const testResults = document.getElementById("testResults");
+
+      // コンソール出力をリダイレクト
+      function redirectConsole() {
+        console.log = function () {
+          const args = Array.from(arguments);
+          originalConsole.log.apply(console, args);
+          logToElement(args.join(" "));
+        };
+
+        console.error = function () {
+          const args = Array.from(arguments);
+          originalConsole.error.apply(console, args);
+          logToElement("ERROR: " + args.join(" "), "red");
+        };
+
+        console.warn = function () {
+          const args = Array.from(arguments);
+          originalConsole.warn.apply(console, args);
+          logToElement("WARNING: " + args.join(" "), "orange");
+        };
+
+        console.assert = function (condition, ...args) {
+          originalConsole.assert.apply(console, [condition, ...args]);
+          if (!condition) {
+            const message = args.length ? args.join(" ") : "Assertion failed";
+            logToElement("ASSERTION FAILED: " + message, "red");
+            throw new Error("Assertion failed: " + message);
+          }
+        };
+      }
+
+      // ログ要素に出力
+      function logToElement(message, color) {
+        const line = document.createElement("div");
+        line.textContent = message;
+        if (color) {
+          line.style.color = color;
+        }
+        testLog.appendChild(line);
+        testLog.scrollTop = testLog.scrollHeight;
+      }
+
+      // テスト実行
+      document
+        .getElementById("runTests")
+        .addEventListener("click", async function () {
+          testLog.innerHTML = "";
+          testResults.innerHTML = "<p>Running tests...</p>";
+
+          redirectConsole();
+
+          try {
+            // 非同期テストを考慮して少し遅延させる
+            setTimeout(async function () {
+              try {
+                if (typeof runDataValidatorTests === "function") {
+                  await runDataValidatorTests();
+                  testResults.innerHTML =
+                    '<p class="success">All tests completed successfully!</p>';
+                } else {
+                  throw new Error("Test function not found");
+                }
+              } catch (error) {
+                testResults.innerHTML = `<p class="failure">Tests failed: ${error.message}</p>`;
+                console.error(error);
+              }
+            }, 100);
+          } catch (error) {
+            testResults.innerHTML = `<p class="failure">Error starting tests: ${error.message}</p>`;
+            console.error(error);
+          }
+        });
+
+      // ログクリア
+      document
+        .getElementById("clearLog")
+        .addEventListener("click", function () {
+          testLog.innerHTML = "";
+        });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Theater Mode - ElementObserver Tests</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .test-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+      pre {
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 3px;
+        overflow-x: auto;
+      }
+      .success {
+        color: #2ecc71;
+      }
+      .error {
+        color: #e74c3c;
+      }
+      #test-results {
+        margin-top: 20px;
+      }
+
+      /* テスト用のYouTubeレイアウト */
+      .youtube-layout {
+        margin-top: 30px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        overflow: hidden;
+      }
+
+      .youtube-header {
+        background-color: #212121;
+        color: white;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+      }
+
+      .youtube-content {
+        display: flex;
+        padding: 10px;
+      }
+
+      .youtube-player {
+        flex: 2;
+        background-color: #000;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        position: relative;
+      }
+
+      .youtube-sidebar {
+        flex: 1;
+        padding: 10px;
+        background-color: #f9f9f9;
+      }
+
+      .youtube-comments {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f9f9f9;
+      }
+
+      .test-controls {
+        margin-top: 20px;
+        padding: 10px;
+        background-color: #eee;
+        border-radius: 5px;
+      }
+
+      button {
+        padding: 8px 15px;
+        margin: 5px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      .status-box {
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="test-container">
+      <h1>🧪 YouTube Theater Mode - ElementObserver Tests</h1>
+      <p>このページではElementObserverクラスの視覚的テストを実行します。</p>
+
+      <!-- テスト用のYouTubeレイアウト -->
+      <div class="youtube-layout">
+        <div class="youtube-header" id="masthead">
+          YouTube Theater Mode Test
+        </div>
+
+        <div class="youtube-content">
+          <div class="youtube-player" id="movie_player">
+            <div>動画プレーヤー</div>
+            <div class="youtube-controls" id="controls">コントロール</div>
+          </div>
+
+          <div class="youtube-sidebar" id="secondary">
+            <h3>関連動画</h3>
+            <div>動画1</div>
+            <div>動画2</div>
+            <div>動画3</div>
+          </div>
+        </div>
+
+        <div class="youtube-comments" id="comments">
+          <h3>コメント</h3>
+          <div>コメント1</div>
+          <div>コメント2</div>
+          <div>コメント3</div>
+        </div>
+      </div>
+
+      <!-- テストコントロール -->
+      <div class="test-controls">
+        <h3>テストコントロール</h3>
+        <button id="visibilityBtn">可視性監視</button>
+        <button id="mutationBtn">変更監視</button>
+        <button id="resizeBtn">サイズ変更監視</button>
+        <button id="stopBtn">監視停止</button>
+        <button id="hideBtn">要素を非表示</button>
+        <button id="showBtn">要素を表示</button>
+
+        <div class="status-box">
+          <p>状態: <span id="stateInfo">初期状態</span></p>
+          <p>可視性: <span id="visibilityInfo">未監視</span></p>
+          <p>変更: <span id="mutationInfo">未監視</span></p>
+          <p>サイズ: <span id="resizeInfo">未監視</span></p>
+        </div>
+      </div>
+
+      <div id="test-results">
+        <h2>テスト結果</h2>
+        <pre id="results-output">テスト実行中...</pre>
+      </div>
+    </div>
+
+    <!-- 依存ライブラリを読み込み -->
+    <script src="../infrastructure/logger.js"></script>
+    <script src="../infrastructure/error-handler.js"></script>
+
+    <!-- テスト対象のスクリプトを読み込み -->
+    <script src="../infrastructure/element-observer.js"></script>
+
+    <!-- テストスクリプトを読み込み -->
+    <script src="test-element-observer.js"></script>
+
+    <script>
+      // 視覚的テスト用のスクリプト
+      document.addEventListener("DOMContentLoaded", () => {
+        // ロガーとエラーハンドラーを作成
+        const logger = new Logger("ObserverTest");
+        const errorHandler = new ErrorHandler(logger);
+
+        // ElementObserverを作成
+        const elementObserver = new ElementObserver(logger, errorHandler);
+
+        // DOM要素を取得
+        const visibilityBtn = document.getElementById("visibilityBtn");
+        const mutationBtn = document.getElementById("mutationBtn");
+        const resizeBtn = document.getElementById("resizeBtn");
+        const stopBtn = document.getElementById("stopBtn");
+        const hideBtn = document.getElementById("hideBtn");
+        const showBtn = document.getElementById("showBtn");
+
+        const stateInfo = document.getElementById("stateInfo");
+        const visibilityInfo = document.getElementById("visibilityInfo");
+        const mutationInfo = document.getElementById("mutationInfo");
+        const resizeInfo = document.getElementById("resizeInfo");
+
+        // 監視対象要素
+        const targetElement = document.getElementById("movie_player");
+
+        // 監視ID
+        let visibilityId = null;
+        let mutationId = null;
+        let resizeId = null;
+
+        // 可視性監視
+        visibilityBtn.addEventListener("click", () => {
+          const result = elementObserver.observeVisibility(targetElement, {
+            callback: (entries) => {
+              const entry = entries[0];
+              visibilityInfo.textContent = `可視: ${
+                entry.visible ? "はい" : "いいえ"
+              }, 比率: ${entry.intersectionRatio.toFixed(2)}`;
+            },
+          });
+
+          if (result.isSuccess()) {
+            visibilityId = result.data;
+            stateInfo.textContent = `可視性監視開始: ${visibilityId}`;
+          }
+        });
+
+        // 変更監視
+        mutationBtn.addEventListener("click", () => {
+          const result = elementObserver.observeMutations(targetElement, {
+            callback: (changes) => {
+              mutationInfo.textContent = `変更検出: ${
+                changes.length
+              }件, 最終: ${new Date().toLocaleTimeString()}`;
+            },
+          });
+
+          if (result.isSuccess()) {
+            mutationId = result.data;
+            stateInfo.textContent = `変更監視開始: ${mutationId}`;
+
+            // テスト用に変更を発生させる
+            setTimeout(() => {
+              targetElement.classList.add("test-class");
+              setTimeout(() => {
+                targetElement.classList.remove("test-class");
+              }, 1000);
+            }, 500);
+          }
+        });
+
+        // サイズ変更監視
+        resizeBtn.addEventListener("click", () => {
+          const result = elementObserver.observeResize(targetElement, {
+            callback: (entries) => {
+              const entry = entries[0];
+              resizeInfo.textContent = `サイズ: ${entry.contentRect.width}x${
+                entry.contentRect.height
+              }, 最終: ${new Date().toLocaleTimeString()}`;
+            },
+          });
+
+          if (result.isSuccess()) {
+            resizeId = result.data;
+            stateInfo.textContent = `サイズ変更監視開始: ${resizeId}`;
+
+            // テスト用にサイズ変更を発生させる
+            setTimeout(() => {
+              targetElement.style.height = "350px";
+              setTimeout(() => {
+                targetElement.style.height = "300px";
+              }, 1000);
+            }, 500);
+          }
+        });
+
+        // 監視停止
+        stopBtn.addEventListener("click", () => {
+          if (visibilityId) {
+            elementObserver.stopObservation(visibilityId);
+            visibilityId = null;
+            visibilityInfo.textContent = "監視停止";
+          }
+
+          if (mutationId) {
+            elementObserver.stopObservation(mutationId);
+            mutationId = null;
+            mutationInfo.textContent = "監視停止";
+          }
+
+          if (resizeId) {
+            elementObserver.stopObservation(resizeId);
+            resizeId = null;
+            resizeInfo.textContent = "監視停止";
+          }
+
+          stateInfo.textContent = "全ての監視を停止しました";
+        });
+
+        // 要素を非表示
+        hideBtn.addEventListener("click", () => {
+          targetElement.style.display = "none";
+          stateInfo.textContent = "要素を非表示にしました";
+        });
+
+        // 要素を表示
+        showBtn.addEventListener("click", () => {
+          targetElement.style.display = "flex";
+          stateInfo.textContent = "要素を表示しました";
+        });
+
+        // 自動テストも実行
+        setTimeout(() => {
+          const resultsOutput = document.getElementById("results-output");
+
+          // コンソール出力をキャプチャ
+          const originalConsoleLog = console.log;
+          const originalConsoleError = console.error;
+
+          console.log = function () {
+            const args = Array.from(arguments).join(" ");
+            resultsOutput.innerHTML += args + "\n";
+            originalConsoleLog.apply(console, arguments);
+          };
+
+          console.error = function () {
+            const args = Array.from(arguments).join(" ");
+            resultsOutput.innerHTML +=
+              '<span class="error">' + args + "</span>\n";
+            originalConsoleError.apply(console, arguments);
+          };
+
+          // テストを実行
+          runElementObserverTests().then(() => {
+            resultsOutput.innerHTML +=
+              '\n<span class="success">✅ All tests complete!</span>';
+          });
+        }, 1000);
+      });
+    </script>
+  </body>
+</html>

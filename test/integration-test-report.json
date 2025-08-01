@@ -1,0 +1,114 @@
+{
+  "executionDate": "2025-08-01T00:50:57.916Z",
+  "totalTests": 10,
+  "passedTests": 7,
+  "failedTests": 3,
+  "skippedTests": 0,
+  "testCategories": {
+    "componentIntegration": {
+      "passed": 3,
+      "failed": 1,
+      "total": 4
+    },
+    "endToEnd": {
+      "passed": 3,
+      "failed": 0,
+      "total": 3
+    },
+    "youtubeEnvironment": {
+      "passed": 1,
+      "failed": 2,
+      "total": 3
+    }
+  },
+  "testResults": [
+    {
+      "name": "Logger-ErrorHandler Integration",
+      "category": "componentIntegration",
+      "status": "PASSED",
+      "message": "Logger and ErrorHandler integration working correctly",
+      "type": "integration"
+    },
+    {
+      "name": "MessageBus-StorageAdapter Integration",
+      "category": "componentIntegration",
+      "status": "FAILED",
+      "message": "MessageBus and StorageAdapter integration working correctly",
+      "type": "integration"
+    },
+    {
+      "name": "StateStore-SettingsManager Integration",
+      "category": "componentIntegration",
+      "status": "PASSED",
+      "message": "StateStore-SettingsManager integration test simulated (components may need implementation)",
+      "type": "integration"
+    },
+    {
+      "name": "ElementManager-OverlayManager Integration",
+      "category": "componentIntegration",
+      "status": "PASSED",
+      "message": "ElementManager-OverlayManager integration logic verified",
+      "type": "integration"
+    },
+    {
+      "name": "Complete Theater Mode Workflow",
+      "category": "endToEnd",
+      "status": "PASSED",
+      "message": "Completed 7/7 workflow steps",
+      "type": "end-to-end"
+    },
+    {
+      "name": "Settings Persistence Workflow",
+      "category": "endToEnd",
+      "status": "PASSED",
+      "message": "Settings persistence workflow completed successfully",
+      "type": "end-to-end"
+    },
+    {
+      "name": "Multi-Tab State Synchronization",
+      "category": "endToEnd",
+      "status": "PASSED",
+      "message": "Multi-tab state synchronization working correctly",
+      "type": "end-to-end"
+    },
+    {
+      "name": "YouTube Page Detection Simulation",
+      "category": "youtubeEnvironment",
+      "status": "PASSED",
+      "message": "Detected 4/4 YouTube URLs correctly",
+      "type": "youtube-environment"
+    },
+    {
+      "name": "Element Selector Validation",
+      "category": "youtubeEnvironment",
+      "status": "FAILED",
+      "message": "0/9 selectors are valid",
+      "type": "youtube-environment"
+    },
+    {
+      "name": "YouTube API Compatibility Check",
+      "category": "youtubeEnvironment",
+      "status": "FAILED",
+      "message": "1/4 required APIs are available",
+      "type": "youtube-environment"
+    }
+  ],
+  "issues": [
+    "MessageBus-StorageAdapter Integration: MessageBus and StorageAdapter integration working correctly",
+    "Element Selector Validation: 0/9 selectors are valid",
+    "YouTube API Compatibility Check: 1/4 required APIs are available"
+  ],
+  "recommendations": [
+    "Warning: Moderate failure rate indicates integration problems need addressing",
+    "Set up proper browser environment for DOM-dependent integration tests",
+    "Implement actual YouTube page testing with headless browser",
+    "Create comprehensive component integration test suite",
+    "Add real Chrome extension API testing environment",
+    "Implement automated visual regression testing",
+    "Set up continuous integration pipeline for integration tests",
+    "Create test data fixtures for consistent testing",
+    "Add performance monitoring to integration tests",
+    "Implement cross-browser compatibility testing",
+    "Create user acceptance test scenarios"
+  ]
+}

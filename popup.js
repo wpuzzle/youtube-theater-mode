@@ -34,6 +34,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /**
    * 設定読み込み
+   * バックグラウンドサービスから現在の設定を取得してUIに反映
+   *
+   * @function loadSettings
    */
   function loadSettings() {
     chrome.runtime.sendMessage({ action: "getSettings" }, (response) => {
@@ -68,6 +71,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   /**
    * 接続状態を確認
+   * 現在のタブがYouTubeページかどうかを確認し、接続状態を表示
+   *
+   * @function checkConnectionStatus
    */
   function checkConnectionStatus() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {

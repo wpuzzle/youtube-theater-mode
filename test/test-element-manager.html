@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YouTube Theater Mode - ElementManager Tests</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .test-container {
+        max-width: 800px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+      pre {
+        background-color: #f9f9f9;
+        padding: 10px;
+        border-radius: 3px;
+        overflow-x: auto;
+      }
+      .success {
+        color: #2ecc71;
+      }
+      .error {
+        color: #e74c3c;
+      }
+      #test-results {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="test-container">
+      <h1>🧪 YouTube Theater Mode - ElementManager Tests</h1>
+      <p>このページではElementManagerクラスの単体テストを実行します。</p>
+      <p>テスト結果はコンソールに出力されます。</p>
+
+      <div id="test-results">
+        <h2>テスト結果</h2>
+        <pre id="results-output">テスト実行中...</pre>
+      </div>
+    </div>
+
+    <!-- 依存ライブラリを読み込み -->
+    <script src="../infrastructure/logger.js"></script>
+    <script src="../infrastructure/error-handler.js"></script>
+
+    <!-- テスト対象のスクリプトを読み込み -->
+    <script src="../infrastructure/element-manager.js"></script>
+
+    <!-- テストスクリプトを読み込み -->
+    <script src="test-element-manager.js"></script>
+
+    <script>
+      // コンソール出力をキャプチャしてページに表示
+      (function () {
+        const resultsOutput = document.getElementById("results-output");
+        const originalConsoleLog = console.log;
+        const originalConsoleError = console.error;
+        const originalConsoleWarn = console.warn;
+
+        // コンソール出力をキャプチャ
+        console.log = function () {
+          const args = Array.from(arguments).join(" ");
+          resultsOutput.innerHTML += args + "\n";
+          originalConsoleLog.apply(console, arguments);
+        };
+
+        console.error = function () {
+          const args = Array.from(arguments).join(" ");
+          resultsOutput.innerHTML +=
+            '<span class="error">' + args + "</span>\n";
+          originalConsoleError.apply(console, arguments);
+        };
+
+        console.warn = function () {
+          const args = Array.from(arguments).join(" ");
+          resultsOutput.innerHTML +=
+            '<span class="warning">' + args + "</span>\n";
+          originalConsoleWarn.apply(console, arguments);
+        };
+
+        // ページ読み込み時にテストを実行
+        window.addEventListener("load", () => {
+          try {
+            // テストを実行
+            runElementManagerTests();
+
+            // 結果を表示
+            setTimeout(() => {
+              if (document.querySelectorAll(".error").length === 0) {
+                resultsOutput.innerHTML +=
+                  '\n<span class="success">✅ All tests passed!</span>';
+              }
+            }, 1000);
+          } catch (error) {
+            console.error("Test execution error:", error);
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

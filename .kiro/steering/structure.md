@@ -2,112 +2,87 @@
 inclusion: always
 ---
 
-# プロジェクト構造 & アーキテクチャ
+# プロジェクトアーキテクチャ & 構造
 
-## ディレクトリ構造
+## コアアーキテクチャパターン
 
-```
-/
-├── manifest.json       # 拡張機能マニフェストファイル
-├── background.js       # バックグラウンドサービスワーカー
-├── content.js          # YouTube ページ用コンテンツスクリプト
-├── popup.html          # 拡張機能ポップアップ UI
-├── popup.js            # ポップアップ機能
-├── popup.css           # ポップアップスタイリング
-├── theater-mode.css    # シアターモードオーバーレイのスタイル
-├── background-service.js # バックグラウンドサービス機能
-├── tab-state-manager.js # タブ状態管理
-├── popup-content-communication.js # ポップアップとコンテンツ間の通信
-├── infrastructure/     # コア機能を提供するユーティリティ
-│   ├── error-handler.js  # エラー処理
-│   ├── logger.js         # ロギング機能
-│   ├── message-bus.js    # コンポーネント間通信
-│   └── storage-adapter.js # ストレージ操作
-├── test/               # テストファイル
-    ├── test-*.js       # テスト実装
-    ├── test-*.html     # テストハーネス
-    └── run-*-tests.js  # テストランナー
-```
+**モジュラーデザイン**: 各責任に専用のモジュールを持つ明確な関心の分離を使用する。
 
-## アーキテクチャ概要
+**インフラストラクチャレイヤー**: すべての共有ユーティリティは `infrastructure/` ディレクトリに配置する。類似の機能を実装する代わりに、常にこれらのクラスを使用する：
 
-この拡張機能は、明確な関心の分離を持つモジュラーアーキテクチャに従っています。
+- `ErrorHandler` - 例外処理とレポート
+- `Logger` - レベル付き構造化ログ（debug、info、warn、error）
+- `MessageBus` - コンポーネント間通信
+- `StorageAdapter` - Chrome Storage API ラッパー
+- `PerformanceMonitor` - パフォーマンス追跡と最適化
 
-### コアコンポーネント
+**コンポーネント通信**: すべてのコンポーネント間メッセージングに `MessageBus` を使用する。コンポーネント間の直接通信は実装しない。
 
-1. **バックグラウンドサービス** (`background.js`, `background-service.js`)
+## 主要コンポーネント & 責任
 
-   - 拡張機能のライフサイクル管理
-   - 設定の保存と取得
-   - コンポーネント間通信の調整
-   - 複数タブ間の状態維持
+**バックグラウンドサービス** (`background.js`, `background-service.js`)
 
-2. **コンテンツスクリプト** (`content.js`)
+- 拡張機能状態の単一の信頼できる情報源
+- すべてのコンポーネント相互作用を調整
+- `StorageAdapter` を介した設定の永続化を管理
+- クロスタブ状態同期を処理
 
-   - シアターモードオーバーレイの注入・管理
-   - YouTube 要素検出
-   - キーボードショートカット処理
-   - バックグラウンドサービスとの通信
+**コンテンツスクリプト** (`content.js`)
 
-3. **ポップアップ UI** (`popup.html`, `popup.js`, `popup.css`)
+- YouTube DOM 操作とオーバーレイ注入
+- 堅牢なフォールバックメカニズムを持つ要素検出
+- キーボードショートカット処理（すべての YouTube ショートカットを保持する必要がある）
+- `MessageBus` を介してバックグラウンドと通信
 
-   - シアターモード切替インターフェース
-   - 透明度調整機能
-   - 拡張機能の状態表示
-   - バックグラウンドサービスとの通信
+**ポップアップインターフェース** (`popup.html`, `popup.js`, `popup.css`)
 
-4. **インフラストラクチャ** (`infrastructure/`)
-   - エラー処理 (`error-handler.js`)
-   - ロギング (`logger.js`)
-   - メッセージング (`message-bus.js`)
-   - ストレージ操作 (`storage-adapter.js`)
+- シアターモード切り替えと透明度調整のユーザーコントロール
+- リアルタイム状態表示
+- 設定管理インターフェース
 
-### 主要クラス
+**インフラストラクチャクラス**（必須使用）
 
-- **TheaterModeController**: シアターモードオーバーレイと切り替え機能を管理
-- **ElementDetector**: フォールバックメカニズムを持つ YouTube 要素検出
-- **SettingsManager**: ユーザー設定の管理（ストレージ・バリデーション）
-- **BackgroundService**: 拡張機能の機能調整
-- **TabStateManager**: 複数タブ間の状態追跡・同期
-- **ErrorHandler**: 例外処理と報告
-- **Logger**: 異なるレベルでのログ記録
-- **MessageBus**: コンポーネント間通信
-- **StorageAdapter**: Chrome Storage API のラッパー
+- `TheaterModeController` - オーバーレイ管理とシアターモードロジック
+- `ElementDetector` - 複数のフォールバック戦略を持つ YouTube 要素検出
+- `SettingsManager` - 検証付きユーザー設定管理
+- `TabStateManager` - マルチタブ状態追跡と同期
 
-## 通信フロー
+## 開発ルール
 
-1. **ユーザーインタラクション**:
+**要素検出**: 常に適切なフォールバックを持つ複数の検出戦略を実装する。YouTube DOM 構造が安定し続けることを前提としない。
 
-   - 拡張機能アイコンクリック → ポップアップ表示
-   - シアターモード切替 → ポップアップ → バックグラウンドへメッセージ送信
-   - キーボードショートカット → コンテンツスクリプト処理 → バックグラウンド通知
+**エラー処理**: `ErrorHandler` を使用してすべての操作を try-catch ブロックでラップする。拡張機能は YouTube 機能を破綻させてはならない。
 
-2. **状態管理**:
+**状態管理**:
 
-   - バックグラウンドサービスが設定の信頼できる情報源
-   - 変更は全アクティブ YouTube タブに伝播
-   - 設定は Chrome Storage API で永続化
-   - `MessageBus`クラスを使用したコンポーネント間通信
+- バックグラウンドサービスが権威ある状態ソース
+- すべての Chrome Storage 操作に `StorageAdapter` を使用
+- すべてのアクティブな YouTube タブに状態変更を伝播
+- `SettingsManager` を通じてすべての設定を検証
 
-3. **シアターモード適用**:
-   - コンテンツスクリプトが状態に基づきオーバーレイ適用/削除
-   - ユーザー設定に基づく透明度調整
-   - 動画プレーヤーの完全な可視性確保
+**パフォーマンス**:
 
-## テスト戦略
+- 操作追跡に `PerformanceMonitor` を使用
+- DOM クエリを最小化し、可能な場合は結果をキャッシュ
+- コンポーネント破棄時にイベントリスナーとオブザーバーをクリーンアップ
 
-- **コンポーネントテスト**: 個別機能の単体テスト (`test/test-*.js`)
-- **統合テスト**: コンポーネント間通信のテスト (`test/test-integration.js`)
-- **視覚的テスト**: オーバーレイ外観のテスト (`test/test-overlay-*.html`)
-- **機能テスト**: キーボードショートカット、設定永続性
-- **テスト実行**: 対応する`run-*-tests.js`ファイルを使用
+**テスト**:
 
-## 開発規約
+- 各コンポーネントには対応する `test/test-*.js` と `run-*-tests.js` ファイルがある
+- 一貫したテスト構造のために `infrastructure/test-framework.js` を使用
+- `infrastructure/mock-factory.js` を使用して外部依存関係をモック
 
-- 新機能は既存のアーキテクチャパターンに従う
-- コンポーネント間の通信には`MessageBus`を使用
-- エラー処理には`ErrorHandler`を使用
-- ストレージ操作には`StorageAdapter`を使用
-- 適切なログレベルで`Logger`を使用
-- 各コンポーネントは単一責任の原則に従う
-- YouTube 要素検出には堅牢なフォールバックメカニズムを実装
+## ファイル命名規則
+
+- コア機能: `kebab-case.js`（例：`theater-mode-controller.js`）
+- インフラストラクチャ: `infrastructure/kebab-case.js`
+- テスト: `test/test-component-name.js` と `test/run-component-tests.js`
+- HTML テストハーネス: `test/test-component-name.html`
+
+## 重要な制約
+
+**YouTube 互換性**: 動画プレーヤー機能や既存の YouTube キーボードショートカットに干渉しない。これが最優先要件。
+
+**適切な劣化**: YouTube の更新で要素検出が破綻した場合でも拡張機能は動作する必要がある。堅牢なフォールバックメカニズムを実装する。
+
+**クリーンアーキテクチャ**: 単一責任原則に従う。各クラスは明確な目的を持ち、共有サービスには依存性注入を使用する。

@@ -221,15 +221,13 @@ MIT License - 詳細は[LICENSE](LICENSE)ファイルを参照
 
 ## 🔗 関連リンク
 
-- [Chrome Web Store](https://chrome.google.com/webstore) (準備中)
+- [Chrome ウェブストア](https://chromewebstore.google.com/detail/youtube-theater-mode/bgmiamnfbabhimeoamhliglpdfiikkck) (準備中)
 - [開発者ドキュメント](docs/)
-- [変更履歴](CHANGELOG.md)
 
 ## 📞 サポート
 
 - **バグレポート**: [GitHub Issues](https://github.com/wpuzzle/youtube-theater-mode/issues)
 - **質問・議論**: [GitHub Discussions](https://github.com/wpuzzle/youtube-theater-mode/discussions)
-- **メール**: support@example.com
 
 ---
 

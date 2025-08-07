@@ -15,7 +15,7 @@ YouTube 視聴時に動画以外の画面要素を薄暗くして、動画コン
 
 ### Chrome Web Store からインストール（推奨）
 
-_現在準備中_
+[Chrome ウェブストア](https://chromewebstore.google.com/detail/youtube-theater-mode/bgmiamnfbabhimeoamhliglpdfiikkck)
 
 ### 手動インストール（開発者向け）
 

@@ -1,0 +1,96 @@
+{
+  "extensionName": {
+    "message": "YouTube Theater Mode",
+    "description": "拡張機能の名前"
+  },
+  "extensionDescription": {
+    "message": "YouTube視聴時に動画以外の画面要素を薄暗くして動画コンテンツに集中できる環境を提供します",
+    "description": "拡張機能の説明"
+  },
+  "theaterMode": {
+    "message": "シアターモード",
+    "description": "シアターモード切り替えラベル"
+  },
+  "enabled": {
+    "message": "有効",
+    "description": "シアターモードが有効な時のステータス"
+  },
+  "disabled": {
+    "message": "無効",
+    "description": "シアターモードが無効な時のステータス"
+  },
+  "settings": {
+    "message": "設定",
+    "description": "設定セクションのヘッダー"
+  },
+  "backgroundOpacity": {
+    "message": "背景の透明度:",
+    "description": "透明度スライダーのラベル"
+  },
+  "reset": {
+    "message": "リセット",
+    "description": "リセットボタンのテキスト"
+  },
+  "resetOpacityTooltip": {
+    "message": "デフォルト透明度に戻す",
+    "description": "透明度リセットボタンのツールチップ"
+  },
+  "keyboardShortcut": {
+    "message": "キーボードショートカット:",
+    "description": "キーボードショートカット設定のラベル"
+  },
+  "infoText": {
+    "message": "YouTubeの動画視聴時に背景を暗くして集中できる環境を提供します。",
+    "description": "拡張機能についての情報テキスト"
+  },
+  "connected": {
+    "message": "接続済み",
+    "description": "接続時の接続ステータス"
+  },
+  "disconnected": {
+    "message": "未接続",
+    "description": "未接続時の接続ステータス"
+  },
+  "shortcutSpace": {
+    "message": "スペース",
+    "description": "ショートカットのスペースキーオプション"
+  },
+  "opacityChanged": {
+    "message": "透明度を$OPACITY$%に変更しました",
+    "description": "透明度変更時のフィードバックメッセージ",
+    "placeholders": {
+      "opacity": {
+        "content": "$1",
+        "example": "70"
+      }
+    }
+  },
+  "theaterModeEnabled": {
+    "message": "シアターモードが有効になりました",
+    "description": "シアターモード有効時のアクセシビリティメッセージ"
+  },
+  "theaterModeDisabled": {
+    "message": "シアターモードが無効になりました",
+    "description": "シアターモード無効時のアクセシビリティメッセージ"
+  },
+  "loading": {
+    "message": "読み込み中...",
+    "description": "読み込み状態のテキスト"
+  },
+  "error": {
+    "message": "エラー",
+    "description": "一般的なエラーメッセージ"
+  },
+  "connectionError": {
+    "message": "接続エラーです。ページを更新してください。",
+    "description": "接続失敗時のエラーメッセージ"
+  },
+  "enableTheaterMode": {
+    "message": "シアターモードを有効にする",
+    "description": "シアターモード有効化のアクセシビリティメッセージ"
+  },
+  "disableTheaterMode": {
+    "message": "シアターモードを無効にする",
+    "description": "シアターモード無効化のアクセシビリティメッセージ"
+  }
+}

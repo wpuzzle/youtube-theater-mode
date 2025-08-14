@@ -3,7 +3,15 @@
  * 拡張機能のポップアップUIの動作を制御
  */
 
+// Initialize I18n Manager
+const i18nManager = new I18nManager();
+
 document.addEventListener("DOMContentLoaded", () => {
+  // Localize the document
+  i18nManager.localizeDocument();
+
+  // Set document language attribute
+  document.documentElement.lang = i18nManager.getCurrentLocale();
   // UI要素の参照を取得
   const theaterModeToggle = document.getElementById("theaterModeToggle");
   const opacitySlider = document.getElementById("opacitySlider");
@@ -79,11 +87,11 @@ document.addEventListener("DOMContentLoaded", () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0] && tabs[0].url.includes("youtube.com")) {
         // YouTubeページが開かれている場合
-        connectionStatus.textContent = "接続済み";
+        connectionStatus.textContent = i18nManager.getMessage("connected");
         connectionStatus.className = "connected";
       } else {
         // YouTubeページが開かれていない場合
-        connectionStatus.textContent = "未接続 (YouTubeで開いてください)";
+        connectionStatus.textContent = i18nManager.getMessage("disconnected");
         connectionStatus.className = "disconnected";
       }
     });
@@ -185,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // フィードバックを表示
     const feedbackEl = document.getElementById("opacityFeedback");
     if (feedbackEl) {
-      feedbackEl.textContent = "デフォルト透明度に戻しました";
+      feedbackEl.textContent = i18nManager.getMessage("resetOpacityTooltip");
       feedbackEl.style.display = "block";
       setTimeout(() => {
         feedbackEl.style.display = "none";
@@ -252,11 +260,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isEnabled) {
         statusIndicator.classList.add("active");
         statusIndicator.classList.remove("inactive");
-        statusText.textContent = "有効";
+        statusText.textContent = i18nManager.getMessage("enabled");
       } else {
         statusIndicator.classList.add("inactive");
         statusIndicator.classList.remove("active");
-        statusText.textContent = "無効";
+        statusText.textContent = i18nManager.getMessage("disabled");
       }
     }
   }
@@ -298,7 +306,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 "バックグラウンド通信エラー:",
                 chrome.runtime.lastError.message
               );
-              connectionStatus.textContent = "通信エラー";
+              connectionStatus.textContent =
+                i18nManager.getMessage("connectionError");
               connectionStatus.className = "disconnected";
               return;
             }
@@ -307,14 +316,15 @@ document.addEventListener("DOMContentLoaded", () => {
               console.log("メッセージ送信成功:", response);
             } else if (response && response.error) {
               console.warn("メッセージ送信エラー:", response.error);
-              connectionStatus.textContent = "通信エラー";
+              connectionStatus.textContent =
+                i18nManager.getMessage("connectionError");
               connectionStatus.className = "disconnected";
             }
           }
         );
       } else {
         console.warn("YouTubeページが開かれていません");
-        connectionStatus.textContent = "未接続 (YouTubeで開いてください)";
+        connectionStatus.textContent = i18nManager.getMessage("disconnected");
         connectionStatus.className = "disconnected";
       }
     });

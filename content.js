@@ -3,6 +3,9 @@
  * YouTube ページでシアターモード機能を提供するメインスクリプト
  */
 
+// Initialize I18n Manager
+const i18nManager = new I18nManager();
+
 /**
  * シアターモードコントローラークラス
  * YouTube ページでのシアターモード機能を管理
@@ -160,8 +163,8 @@ class TheaterModeController {
     // ボタンが削除されたため、何もしない
     // スクリーンリーダー向けに状態変更を通知
     const tooltipText = this.isTheaterModeActive
-      ? "シアターモードを無効にする"
-      : "シアターモードを有効にする";
+      ? i18nManager.getMessage("disableTheaterMode")
+      : i18nManager.getMessage("enableTheaterMode");
     this.announceStateChange(tooltipText);
   }
 

@@ -2,6 +2,10 @@
 
 YouTube 視聴時に動画以外の画面要素を薄暗くして、動画コンテンツに集中できる環境を提供する Chrome 拡張機能です。
 
+[English](#english) | [日本語](#japanese)
+
+## Japanese
+
 ## 🎯 主要機能
 
 - **シアターモード**: 非動画要素（サイドバー、コメント、関連動画）に半透明の暗いオーバーレイを適用
@@ -91,6 +95,9 @@ git clone https://github.com/wpuzzle/youtube-theater-mode.git
 ├── performance-utils.js             # パフォーマンス最適化
 ├── accessibility-improvements.js    # アクセシビリティ機能
 ├── youtube-shortcut-protection.js   # ショートカット保護
+├── _locales/                        # 多言語対応
+│   ├── en/messages.json            # 英語翻訳
+│   └── ja/messages.json            # 日本語翻訳
 └── icons/                          # アイコンファイル
 ```
 
@@ -198,6 +205,19 @@ python -m http.server 8000
 - **CSS**: BEM 風命名規則、レスポンシブデザイン
 - **HTML**: セマンティック HTML5、アクセシビリティ属性
 
+## 🌐 多言語対応
+
+拡張機能は複数の言語をサポートしています：
+
+- **日本語** (ja) - デフォルト
+- **英語** (en)
+
+ブラウザの言語設定から自動的に言語が検出されます。新しい言語を追加するには：
+
+1. `_locales/[言語コード]/messages.json` を作成
+2. すべてのメッセージキーの翻訳を追加
+3. ブラウザの言語設定でテスト
+
 ## 🤝 コントリビューション
 
 ### バグレポート
@@ -232,3 +252,256 @@ MIT License - 詳細は[LICENSE](LICENSE)ファイルを参照
 ---
 
 **YouTube Theater Mode** - より集中できる YouTube 視聴体験を提供します 🎬
+
+---
+
+## English
+
+A Chrome extension that dims non-video elements on YouTube to create a focused viewing environment while maintaining full functionality of the video player.
+
+## 🎯 Key Features
+
+- **Theater Mode**: Apply a semi-transparent dark overlay to non-video elements (sidebar, comments, related videos)
+- **Video Player Protection**: Maintain complete visibility of the video player and its controls
+- **Easy Toggle**: Switch theater mode on/off with popup button or keyboard shortcut
+- **Opacity Adjustment**: Adjust overlay opacity from 0-90%
+- **Settings Persistence**: Automatically save settings between sessions
+- **Accessibility Support**: Screen reader compatible with keyboard navigation
+
+## 🚀 Installation
+
+### From Chrome Web Store (Recommended)
+
+[Chrome Web Store](https://chromewebstore.google.com/detail/youtube-theater-mode/bgmiamnfbabhimeoamhliglpdfiikkck)
+
+### Manual Installation (For Developers)
+
+1. Clone or download this repository
+
+```bash
+git clone https://github.com/wpuzzle/youtube-theater-mode.git
+```
+
+2. Open Chrome and navigate to `chrome://extensions/`
+
+3. Enable "Developer mode" in the top right
+
+4. Click "Load unpacked"
+
+5. Select the downloaded extension folder
+
+## 📖 Usage
+
+### Basic Operations
+
+1. **Click Extension Icon**: Click the extension icon in the browser toolbar to open the popup
+
+2. **Toggle Theater Mode**: Click the "Theater Mode" button in the popup
+
+3. **Keyboard Shortcut**: Use `Ctrl+Shift+T` to toggle theater mode
+
+4. **Adjust Opacity**: Use the slider in the popup to adjust overlay opacity
+
+### Supported Pages
+
+- YouTube video pages (`youtube.com/watch`)
+- YouTube Shorts (`youtube.com/shorts`)
+- YouTube Live streams
+- YouTube Premium videos
+
+## ⚙️ Settings
+
+### Opacity Settings
+
+- **Range**: 0% - 90%
+- **Default**: 70%
+- **Adjustment**: Use the slider in the popup
+
+### Keyboard Shortcuts
+
+- **Default**: `Ctrl+Shift+T`
+- **Function**: Toggle theater mode on/off
+
+## 🛠️ Technical Specifications
+
+### Technology Stack
+
+- **Framework**: Chrome Extension Manifest V3
+- **Languages**: JavaScript (ES6+), HTML5, CSS3
+- **Storage**: Chrome Storage API (sync)
+- **Dependencies**: None (Pure Vanilla JavaScript)
+
+### File Structure
+
+```
+/
+├── manifest.json                    # Extension manifest
+├── background.js                    # Background service worker
+├── content.js                       # Main content script
+├── popup.html                       # Popup UI
+├── popup.js                         # Popup functionality
+├── popup.css                        # Popup styles
+├── theater-mode.css                 # Theater mode styles
+├── background-service.js            # Background service
+├── tab-state-manager.js             # Tab state management
+├── popup-content-communication.js   # Communication management
+├── performance-utils.js             # Performance optimization
+├── accessibility-improvements.js    # Accessibility features
+├── youtube-shortcut-protection.js   # Shortcut protection
+├── _locales/                        # Internationalization
+│   ├── en/messages.json            # English translations
+│   └── ja/messages.json            # Japanese translations
+└── icons/                          # Icon files
+```
+
+### Main Classes
+
+#### TheaterModeController
+
+Manages core theater mode functionality
+
+- Apply/remove overlay
+- Opacity adjustment
+- State management
+
+#### ElementDetector
+
+YouTube element detection with fallback functionality
+
+- Video player detection
+- Identify overlay target elements
+- Exclude protected elements
+
+#### SettingsManager
+
+User settings management
+
+- Chrome Storage API integration
+- LocalStorage fallback
+- Settings validation
+
+## 🧪 Testing
+
+### Test File Structure
+
+```
+test-*.js           # Test files for each feature
+test-*.html         # HTML test harnesses
+run-*-tests.js      # Test runners
+```
+
+### Running Tests
+
+1. **Individual Test Execution**:
+
+```bash
+# Open corresponding HTML file in browser
+open test-button-placement.html
+```
+
+2. **Run All Tests**:
+
+```bash
+# Execute each run-*-tests.js file
+node run-element-tests.js
+node run-layout-tests.js
+node run-opacity-tests.js
+```
+
+### Test Categories
+
+- **Element Detection Tests**: Accurate detection of YouTube elements
+- **Layout Tests**: Behavior across different screen sizes
+- **Opacity Tests**: Overlay opacity adjustment
+- **Integration Tests**: Component interaction
+- **Accessibility Tests**: Screen reader compatibility
+- **Performance Tests**: Speed and memory usage
+
+## 🔧 Development
+
+### Development Environment Setup
+
+1. **Clone Repository**:
+
+```bash
+git clone https://github.com/wpuzzle/youtube-theater-mode.git
+cd youtube-theater-mode
+```
+
+2. **Load Extension**:
+
+   - Chrome: `chrome://extensions/` → Developer mode → Load unpacked
+
+3. **Start Development Server** (Optional):
+
+```bash
+# Serve test files with simple HTTP server
+python -m http.server 8000
+```
+
+### Debugging Methods
+
+1. **Console Logs**:
+
+   - F12 → Console → Filter by "YouTube Theater Mode:"
+
+2. **Background Logs**:
+
+   - `chrome://extensions/` → Click "background page" for the extension
+
+3. **Storage Inspection**:
+   - F12 → Application → Storage → Chrome Extension
+
+### Coding Standards
+
+- **JavaScript**: Prefer ES6+ features, JSDoc comments required
+- **CSS**: BEM-style naming convention, responsive design
+- **HTML**: Semantic HTML5, accessibility attributes
+
+## 🌐 Internationalization
+
+The extension supports multiple languages:
+
+- **Japanese** (ja) - Default
+- **English** (en)
+
+Language is automatically detected from browser settings. To add new languages:
+
+1. Create `_locales/[language_code]/messages.json`
+2. Add translations for all message keys
+3. Test with browser language settings
+
+## 🤝 Contributing
+
+### Bug Reports
+
+Report bugs in [Issues](https://github.com/wpuzzle/youtube-theater-mode/issues).
+
+### Feature Requests
+
+Discuss new feature ideas in [Discussions](https://github.com/wpuzzle/youtube-theater-mode/discussions).
+
+### Pull Requests
+
+1. Fork and create a branch
+2. Implement changes
+3. Add/update tests
+4. Create pull request
+
+## 📄 License
+
+MIT License - See [LICENSE](LICENSE) file for details
+
+## 🔗 Related Links
+
+- [Chrome Web Store](https://chromewebstore.google.com/detail/youtube-theater-mode/bgmiamnfbabhimeoamhliglpdfiikkck) (Coming Soon)
+- [Developer Documentation](docs/)
+
+## 📞 Support
+
+- **Bug Reports**: [GitHub Issues](https://github.com/wpuzzle/youtube-theater-mode/issues)
+- **Questions & Discussion**: [GitHub Discussions](https://github.com/wpuzzle/youtube-theater-mode/discussions)
+
+---
+
+**YouTube Theater Mode** - Creating a more focused YouTube viewing experience 🎬

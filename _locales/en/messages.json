@@ -1,0 +1,96 @@
+{
+  "extensionName": {
+    "message": "YouTube Theater Mode",
+    "description": "Name of the extension"
+  },
+  "extensionDescription": {
+    "message": "Dims non-video elements on YouTube to create a focused viewing environment",
+    "description": "Description of the extension"
+  },
+  "theaterMode": {
+    "message": "Theater Mode",
+    "description": "Theater mode toggle label"
+  },
+  "enabled": {
+    "message": "Enabled",
+    "description": "Status when theater mode is enabled"
+  },
+  "disabled": {
+    "message": "Disabled",
+    "description": "Status when theater mode is disabled"
+  },
+  "settings": {
+    "message": "Settings",
+    "description": "Settings section header"
+  },
+  "backgroundOpacity": {
+    "message": "Background Opacity:",
+    "description": "Label for opacity slider"
+  },
+  "reset": {
+    "message": "Reset",
+    "description": "Reset button text"
+  },
+  "resetOpacityTooltip": {
+    "message": "Reset to default opacity",
+    "description": "Tooltip for reset opacity button"
+  },
+  "keyboardShortcut": {
+    "message": "Keyboard Shortcut:",
+    "description": "Label for keyboard shortcut setting"
+  },
+  "infoText": {
+    "message": "Dims the background while watching YouTube videos to create a focused viewing environment.",
+    "description": "Information text about the extension"
+  },
+  "connected": {
+    "message": "Connected",
+    "description": "Connection status when connected"
+  },
+  "disconnected": {
+    "message": "Disconnected",
+    "description": "Connection status when disconnected"
+  },
+  "shortcutSpace": {
+    "message": "Space",
+    "description": "Space key option for shortcuts"
+  },
+  "opacityChanged": {
+    "message": "Opacity changed to $OPACITY$%",
+    "description": "Feedback message when opacity changes",
+    "placeholders": {
+      "opacity": {
+        "content": "$1",
+        "example": "70"
+      }
+    }
+  },
+  "theaterModeEnabled": {
+    "message": "Theater mode enabled",
+    "description": "Accessibility message when theater mode is enabled"
+  },
+  "theaterModeDisabled": {
+    "message": "Theater mode disabled",
+    "description": "Accessibility message when theater mode is disabled"
+  },
+  "loading": {
+    "message": "Loading...",
+    "description": "Loading state text"
+  },
+  "error": {
+    "message": "Error",
+    "description": "Generic error message"
+  },
+  "connectionError": {
+    "message": "Connection error. Please refresh the page.",
+    "description": "Error message when connection fails"
+  },
+  "enableTheaterMode": {
+    "message": "Enable theater mode",
+    "description": "Accessibility message to enable theater mode"
+  },
+  "disableTheaterMode": {
+    "message": "Disable theater mode",
+    "description": "Accessibility message to disable theater mode"
+  }
+}

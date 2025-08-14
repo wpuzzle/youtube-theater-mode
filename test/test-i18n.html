@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>I18n Test - YouTube Theater Mode</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+      }
+      .test-section {
+        margin: 20px 0;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      .test-section h3 {
+        margin-top: 0;
+        color: #333;
+      }
+      .language-selector {
+        margin: 20px 0;
+        padding: 10px;
+        background: #f5f5f5;
+        border-radius: 5px;
+      }
+      .message-test {
+        margin: 10px 0;
+        padding: 10px;
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 3px;
+      }
+      .message-key {
+        font-family: monospace;
+        color: #666;
+        font-size: 0.9em;
+      }
+      .message-value {
+        font-weight: bold;
+        margin-left: 10px;
+      }
+      button {
+        padding: 8px 16px;
+        margin: 5px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        background: #fff;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #f0f0f0;
+      }
+      .current-locale {
+        font-weight: bold;
+        color: #007cba;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>YouTube Theater Mode - Internationalization Test</h1>
+
+    <div class="language-selector">
+      <h3>Language Selection</h3>
+      <p>
+        Current Locale: <span id="currentLocale" class="current-locale">-</span>
+      </p>
+      <button onclick="simulateLanguage('en')">English</button>
+      <button onclick="simulateLanguage('ja')">日本語</button>
+      <button onclick="detectBrowserLanguage()">Auto-detect</button>
+    </div>
+
+    <div class="test-section">
+      <h3>Extension Messages</h3>
+      <div id="messageTests"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>Popup UI Simulation</h3>
+      <div
+        style="
+          border: 1px solid #ccc;
+          padding: 15px;
+          border-radius: 5px;
+          max-width: 300px;
+        "
+      >
+        <h4 data-i18n="extensionName">YouTube Theater Mode</h4>
+
+        <div style="margin: 10px 0">
+          <label>
+            <input type="checkbox" id="testToggle" />
+            <span data-i18n="theaterMode">Theater Mode</span>
+          </label>
+          <div>
+            Status: <span id="testStatus" data-i18n="disabled">Disabled</span>
+          </div>
+        </div>
+
+        <div style="margin: 10px 0">
+          <h5 data-i18n="settings">Settings</h5>
+          <label data-i18n="backgroundOpacity">Background Opacity:</label>
+          <input type="range" min="0" max="0.9" step="0.05" value="0.7" />
+          <button data-i18n="reset">Reset</button>
+        </div>
+
+        <div style="margin: 10px 0">
+          <label data-i18n="keyboardShortcut">Keyboard Shortcut:</label>
+          <select>
+            <option value="t">T</option>
+            <option value="f">F</option>
+            <option value="space" data-i18n="shortcutSpace">Space</option>
+          </select>
+        </div>
+
+        <p data-i18n="infoText" style="font-size: 0.9em; color: #666">
+          Extension info text
+        </p>
+
+        <div>
+          Connection:
+          <span id="testConnection" data-i18n="connected">Connected</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="test-section">
+      <h3>Accessibility Messages</h3>
+      <button onclick="testAccessibilityMessage('enableTheaterMode')">
+        Test Enable Message
+      </button>
+      <button onclick="testAccessibilityMessage('disableTheaterMode')">
+        Test Disable Message
+      </button>
+      <div
+        id="accessibilityOutput"
+        style="
+          margin-top: 10px;
+          padding: 10px;
+          background: #f9f9f9;
+          border-radius: 3px;
+        "
+      ></div>
+    </div>
+
+    <script src="../infrastructure/i18n-manager.js"></script>
+    <script src="../infrastructure/language-detector.js"></script>
+    <script>
+      let i18nManager;
+      let languageDetector;
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        i18nManager = new I18nManager();
+        languageDetector = new LanguageDetector();
+
+        updateCurrentLocale();
+        runMessageTests();
+        localizeUI();
+
+        // Test toggle functionality
+        document
+          .getElementById("testToggle")
+          .addEventListener("change", function () {
+            const statusEl = document.getElementById("testStatus");
+            const connectionEl = document.getElementById("testConnection");
+
+            if (this.checked) {
+              statusEl.textContent = i18nManager.getMessage("enabled");
+              connectionEl.textContent = i18nManager.getMessage("connected");
+            } else {
+              statusEl.textContent = i18nManager.getMessage("disabled");
+              connectionEl.textContent = i18nManager.getMessage("disconnected");
+            }
+          });
+      });
+
+      function updateCurrentLocale() {
+        document.getElementById("currentLocale").textContent =
+          i18nManager.getCurrentLocale();
+      }
+
+      function simulateLanguage(langCode) {
+        // This is a simulation - in real extension, language is detected automatically
+        console.log(`Simulating language: ${langCode}`);
+
+        // Create a new i18nManager instance (simulation)
+        i18nManager.currentLocale = langCode;
+
+        updateCurrentLocale();
+        runMessageTests();
+        localizeUI();
+      }
+
+      function detectBrowserLanguage() {
+        const detected = languageDetector.getBestMatchingLanguage();
+        simulateLanguage(detected);
+      }
+
+      function runMessageTests() {
+        const testMessages = [
+          "extensionName",
+          "extensionDescription",
+          "theaterMode",
+          "enabled",
+          "disabled",
+          "settings",
+          "backgroundOpacity",
+          "reset",
+          "keyboardShortcut",
+          "connected",
+          "disconnected",
+          "shortcutSpace",
+          "infoText",
+          "enableTheaterMode",
+          "disableTheaterMode",
+          "loading",
+          "error",
+          "connectionError",
+        ];
+
+        const container = document.getElementById("messageTests");
+        container.innerHTML = "";
+
+        testMessages.forEach((key) => {
+          const div = document.createElement("div");
+          div.className = "message-test";
+
+          const keySpan = document.createElement("span");
+          keySpan.className = "message-key";
+          keySpan.textContent = key + ":";
+
+          const valueSpan = document.createElement("span");
+          valueSpan.className = "message-value";
+          valueSpan.textContent = i18nManager.getMessage(key);
+
+          div.appendChild(keySpan);
+          div.appendChild(valueSpan);
+          container.appendChild(div);
+        });
+      }
+
+      function localizeUI() {
+        i18nManager.localizeDocument();
+      }
+
+      function testAccessibilityMessage(messageKey) {
+        const message = i18nManager.getMessage(messageKey);
+        const output = document.getElementById("accessibilityOutput");
+        output.innerHTML = `<strong>Accessibility Message:</strong> "${message}"`;
+
+        // Simulate screen reader announcement
+        console.log(`Screen reader would announce: "${message}"`);
+      }
+    </script>
+  </body>
+</html>

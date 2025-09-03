@@ -48,7 +48,7 @@
     "description": "Connection status when connected"
   },
   "disconnected": {
-    "message": "Disconnected",
+    "message": "Disconnected(Please open on YouTube)",
     "description": "Connection status when disconnected"
   },
   "shortcutSpace": {

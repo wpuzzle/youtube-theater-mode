@@ -4,8 +4,8 @@
  */
 class LanguageDetector {
   constructor() {
-    this.supportedLanguages = ["en", "ja"];
-    this.defaultLanguage = "ja";
+    this.supportedLanguages = ["en", "ja", "ko", "zh_CN", "zh_TW"];
+    this.defaultLanguage = "en";
   }
 
   /**
@@ -69,6 +69,23 @@ class LanguageDetector {
       return requested;
     }
 
+    // Special handling for Chinese variants
+    if (requested.startsWith("zh")) {
+      if (
+        requested.includes("tw") ||
+        requested.includes("hk") ||
+        requested.includes("hant")
+      ) {
+        return "zh_TW"; // Traditional Chinese
+      } else if (
+        requested.includes("cn") ||
+        requested.includes("hans") ||
+        requested === "zh"
+      ) {
+        return "zh_CN"; // Simplified Chinese
+      }
+    }
+
     // Language code match (e.g., 'en-US' -> 'en')
     const languageCode = requested.split("-")[0];
     if (this.supportedLanguages.includes(languageCode)) {
@@ -104,6 +121,9 @@ class LanguageDetector {
     return {
       en: "English",
       ja: "日本語",
+      ko: "한국어",
+      zh_CN: "简体中文",
+      zh_TW: "繁體中文",
     };
   }
 }

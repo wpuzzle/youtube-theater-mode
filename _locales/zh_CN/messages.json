@@ -1,0 +1,96 @@
+{
+  "extensionName": {
+    "message": "YouTube Theater Mode",
+    "description": "扩展程序的名称"
+  },
+  "extensionDescription": {
+    "message": "在YouTube上淡化非视频元素，创造专注的观看环境",
+    "description": "扩展程序的描述"
+  },
+  "theaterMode": {
+    "message": "影院模式",
+    "description": "影院模式切换标签"
+  },
+  "enabled": {
+    "message": "已启用",
+    "description": "影院模式启用时的状态"
+  },
+  "disabled": {
+    "message": "已禁用",
+    "description": "影院模式禁用时的状态"
+  },
+  "settings": {
+    "message": "设置",
+    "description": "设置部分标题"
+  },
+  "backgroundOpacity": {
+    "message": "背景透明度：",
+    "description": "透明度滑块标签"
+  },
+  "reset": {
+    "message": "重置",
+    "description": "重置按钮文本"
+  },
+  "resetOpacityTooltip": {
+    "message": "重置为默认透明度",
+    "description": "重置透明度按钮工具提示"
+  },
+  "keyboardShortcut": {
+    "message": "键盘快捷键：",
+    "description": "键盘快捷键设置标签"
+  },
+  "infoText": {
+    "message": "在观看YouTube视频时淡化背景，创造专注的观看环境。",
+    "description": "关于扩展程序的信息文本"
+  },
+  "connected": {
+    "message": "已连接",
+    "description": "连接时的连接状态"
+  },
+  "disconnected": {
+    "message": "未连接（请在YouTube上打开）",
+    "description": "未连接时的连接状态"
+  },
+  "shortcutSpace": {
+    "message": "空格",
+    "description": "快捷键的空格键选项"
+  },
+  "opacityChanged": {
+    "message": "透明度已更改为$OPACITY$%",
+    "description": "透明度更改时的反馈消息",
+    "placeholders": {
+      "opacity": {
+        "content": "$1",
+        "example": "70"
+      }
+    }
+  },
+  "theaterModeEnabled": {
+    "message": "影院模式已启用",
+    "description": "启用影院模式时的无障碍消息"
+  },
+  "theaterModeDisabled": {
+    "message": "影院模式已禁用",
+    "description": "禁用影院模式时的无障碍消息"
+  },
+  "loading": {
+    "message": "加载中...",
+    "description": "加载状态文本"
+  },
+  "error": {
+    "message": "错误",
+    "description": "通用错误消息"
+  },
+  "connectionError": {
+    "message": "连接错误。请刷新页面。",
+    "description": "连接失败时的错误消息"
+  },
+  "enableTheaterMode": {
+    "message": "启用影院模式",
+    "description": "启用影院模式的无障碍消息"
+  },
+  "disableTheaterMode": {
+    "message": "禁用影院模式",
+    "description": "禁用影院模式的无障碍消息"
+  }
+}

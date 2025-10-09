@@ -1,0 +1,96 @@
+{
+  "extensionName": {
+    "message": "YouTube Theater Mode",
+    "description": "확장 프로그램의 이름"
+  },
+  "extensionDescription": {
+    "message": "YouTube에서 동영상이 아닌 요소들을 흐리게 처리하여 집중된 시청 환경을 제공합니다",
+    "description": "확장 프로그램의 설명"
+  },
+  "theaterMode": {
+    "message": "극장 모드",
+    "description": "극장 모드 토글 라벨"
+  },
+  "enabled": {
+    "message": "활성화됨",
+    "description": "극장 모드가 활성화된 상태"
+  },
+  "disabled": {
+    "message": "비활성화됨",
+    "description": "극장 모드가 비활성화된 상태"
+  },
+  "settings": {
+    "message": "설정",
+    "description": "설정 섹션 헤더"
+  },
+  "backgroundOpacity": {
+    "message": "배경 투명도:",
+    "description": "투명도 슬라이더 라벨"
+  },
+  "reset": {
+    "message": "초기화",
+    "description": "초기화 버튼 텍스트"
+  },
+  "resetOpacityTooltip": {
+    "message": "기본 투명도로 초기화",
+    "description": "투명도 초기화 버튼 툴팁"
+  },
+  "keyboardShortcut": {
+    "message": "키보드 단축키:",
+    "description": "키보드 단축키 설정 라벨"
+  },
+  "infoText": {
+    "message": "YouTube 동영상 시청 시 배경을 흐리게 처리하여 집중할 수 있는 환경을 제공합니다.",
+    "description": "확장 프로그램에 대한 정보 텍스트"
+  },
+  "connected": {
+    "message": "연결됨",
+    "description": "연결된 상태의 연결 상태"
+  },
+  "disconnected": {
+    "message": "연결 안됨(YouTube에서 열어주세요)",
+    "description": "연결되지 않은 상태의 연결 상태"
+  },
+  "shortcutSpace": {
+    "message": "스페이스",
+    "description": "단축키의 스페이스 키 옵션"
+  },
+  "opacityChanged": {
+    "message": "투명도가 $OPACITY$%로 변경되었습니다",
+    "description": "투명도 변경 시 피드백 메시지",
+    "placeholders": {
+      "opacity": {
+        "content": "$1",
+        "example": "70"
+      }
+    }
+  },
+  "theaterModeEnabled": {
+    "message": "극장 모드가 활성화되었습니다",
+    "description": "극장 모드 활성화 시 접근성 메시지"
+  },
+  "theaterModeDisabled": {
+    "message": "극장 모드가 비활성화되었습니다",
+    "description": "극장 모드 비활성화 시 접근성 메시지"
+  },
+  "loading": {
+    "message": "로딩 중...",
+    "description": "로딩 상태 텍스트"
+  },
+  "error": {
+    "message": "오류",
+    "description": "일반적인 오류 메시지"
+  },
+  "connectionError": {
+    "message": "연결 오류입니다. 페이지를 새로고침해 주세요.",
+    "description": "연결 실패 시 오류 메시지"
+  },
+  "enableTheaterMode": {
+    "message": "극장 모드 활성화",
+    "description": "극장 모드 활성화 접근성 메시지"
+  },
+  "disableTheaterMode": {
+    "message": "극장 모드 비활성화",
+    "description": "극장 모드 비활성화 접근성 메시지"
+  }
+}

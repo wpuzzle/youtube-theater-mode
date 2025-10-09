@@ -1,0 +1,96 @@
+{
+  "extensionName": {
+    "message": "YouTube Theater Mode",
+    "description": "擴充功能的名稱"
+  },
+  "extensionDescription": {
+    "message": "在YouTube上淡化非影片元素，創造專注的觀看環境",
+    "description": "擴充功能的描述"
+  },
+  "theaterMode": {
+    "message": "影院模式",
+    "description": "影院模式切換標籤"
+  },
+  "enabled": {
+    "message": "已啟用",
+    "description": "影院模式啟用時的狀態"
+  },
+  "disabled": {
+    "message": "已停用",
+    "description": "影院模式停用時的狀態"
+  },
+  "settings": {
+    "message": "設定",
+    "description": "設定部分標題"
+  },
+  "backgroundOpacity": {
+    "message": "背景透明度：",
+    "description": "透明度滑桿標籤"
+  },
+  "reset": {
+    "message": "重設",
+    "description": "重設按鈕文字"
+  },
+  "resetOpacityTooltip": {
+    "message": "重設為預設透明度",
+    "description": "重設透明度按鈕工具提示"
+  },
+  "keyboardShortcut": {
+    "message": "鍵盤快速鍵：",
+    "description": "鍵盤快速鍵設定標籤"
+  },
+  "infoText": {
+    "message": "在觀看YouTube影片時淡化背景，創造專注的觀看環境。",
+    "description": "關於擴充功能的資訊文字"
+  },
+  "connected": {
+    "message": "已連線",
+    "description": "連線時的連線狀態"
+  },
+  "disconnected": {
+    "message": "未連線（請在YouTube上開啟）",
+    "description": "未連線時的連線狀態"
+  },
+  "shortcutSpace": {
+    "message": "空白鍵",
+    "description": "快速鍵的空白鍵選項"
+  },
+  "opacityChanged": {
+    "message": "透明度已更改為$OPACITY$%",
+    "description": "透明度更改時的回饋訊息",
+    "placeholders": {
+      "opacity": {
+        "content": "$1",
+        "example": "70"
+      }
+    }
+  },
+  "theaterModeEnabled": {
+    "message": "影院模式已啟用",
+    "description": "啟用影院模式時的無障礙訊息"
+  },
+  "theaterModeDisabled": {
+    "message": "影院模式已停用",
+    "description": "停用影院模式時的無障礙訊息"
+  },
+  "loading": {
+    "message": "載入中...",
+    "description": "載入狀態文字"
+  },
+  "error": {
+    "message": "錯誤",
+    "description": "通用錯誤訊息"
+  },
+  "connectionError": {
+    "message": "連線錯誤。請重新整理頁面。",
+    "description": "連線失敗時的錯誤訊息"
+  },
+  "enableTheaterMode": {
+    "message": "啟用影院模式",
+    "description": "啟用影院模式的無障礙訊息"
+  },
+  "disableTheaterMode": {
+    "message": "停用影院模式",
+    "description": "停用影院模式的無障礙訊息"
+  }
+}

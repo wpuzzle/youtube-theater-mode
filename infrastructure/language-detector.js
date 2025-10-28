@@ -4,7 +4,19 @@
  */
 class LanguageDetector {
   constructor() {
-    this.supportedLanguages = ["en", "ja", "ko", "zh_CN", "zh_TW"];
+    this.supportedLanguages = [
+      "en",
+      "ja",
+      "ko",
+      "zh_CN",
+      "zh_TW",
+      "es",
+      "fr",
+      "ru",
+      "pt",
+      "de",
+      "it",
+    ];
     this.defaultLanguage = "en";
   }
 
@@ -124,6 +136,12 @@ class LanguageDetector {
       ko: "한국어",
       zh_CN: "简体中文",
       zh_TW: "繁體中文",
+      es: "Español",
+      fr: "Français",
+      ru: "Русский",
+      pt: "Português",
+      de: "Deutsch",
+      it: "Italiano",
     };
   }
 }

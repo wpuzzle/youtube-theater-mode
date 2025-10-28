@@ -1,0 +1,96 @@
+{
+  "extensionName": {
+    "message": "YouTube Theater Mode",
+    "description": "Name der Erweiterung"
+  },
+  "extensionDescription": {
+    "message": "Dunkelt Nicht-Video-Elemente auf YouTube ab, um eine fokussierte Anzeigeumgebung zu schaffen",
+    "description": "Beschreibung der Erweiterung"
+  },
+  "theaterMode": {
+    "message": "Kinomodus",
+    "description": "Beschriftung für Kinomodus-Umschaltung"
+  },
+  "enabled": {
+    "message": "Aktiviert",
+    "description": "Status, wenn der Kinomodus aktiviert ist"
+  },
+  "disabled": {
+    "message": "Deaktiviert",
+    "description": "Status, wenn der Kinomodus deaktiviert ist"
+  },
+  "settings": {
+    "message": "Einstellungen",
+    "description": "Überschrift für Einstellungsbereich"
+  },
+  "backgroundOpacity": {
+    "message": "Hintergrundtransparenz:",
+    "description": "Beschriftung für Transparenz-Schieberegler"
+  },
+  "reset": {
+    "message": "Zurücksetzen",
+    "description": "Text für Zurücksetzen-Schaltfläche"
+  },
+  "resetOpacityTooltip": {
+    "message": "Auf Standard-Transparenz zurücksetzen",
+    "description": "Tooltip für Transparenz-Zurücksetzen-Schaltfläche"
+  },
+  "keyboardShortcut": {
+    "message": "Tastenkombination:",
+    "description": "Beschriftung für Tastenkombinations-Einstellung"
+  },
+  "infoText": {
+    "message": "Dunkelt den Hintergrund beim Ansehen von YouTube-Videos ab, um eine fokussierte Anzeigeumgebung zu schaffen.",
+    "description": "Informationstext über die Erweiterung"
+  },
+  "connected": {
+    "message": "Verbunden",
+    "description": "Verbindungsstatus, wenn verbunden"
+  },
+  "disconnected": {
+    "message": "Nicht verbunden (Bitte auf YouTube öffnen)",
+    "description": "Verbindungsstatus, wenn nicht verbunden"
+  },
+  "shortcutSpace": {
+    "message": "Leertaste",
+    "description": "Leertasten-Option für Tastenkombinationen"
+  },
+  "opacityChanged": {
+    "message": "Transparenz auf $OPACITY$% geändert",
+    "description": "Feedback-Nachricht bei Änderung der Transparenz",
+    "placeholders": {
+      "opacity": {
+        "content": "$1",
+        "example": "70"
+      }
+    }
+  },
+  "theaterModeEnabled": {
+    "message": "Kinomodus aktiviert",
+    "description": "Barrierefreiheitsnachricht bei Aktivierung des Kinomodus"
+  },
+  "theaterModeDisabled": {
+    "message": "Kinomodus deaktiviert",
+    "description": "Barrierefreiheitsnachricht bei Deaktivierung des Kinomodus"
+  },
+  "loading": {
+    "message": "Laden...",
+    "description": "Text für Ladezustand"
+  },
+  "error": {
+    "message": "Fehler",
+    "description": "Allgemeine Fehlermeldung"
+  },
+  "connectionError": {
+    "message": "Verbindungsfehler. Bitte aktualisieren Sie die Seite.",
+    "description": "Fehlermeldung bei Verbindungsfehler"
+  },
+  "enableTheaterMode": {
+    "message": "Kinomodus aktivieren",
+    "description": "Barrierefreiheitsnachricht zum Aktivieren des Kinomodus"
+  },
+  "disableTheaterMode": {
+    "message": "Kinomodus deaktivieren",
+    "description": "Barrierefreiheitsnachricht zum Deaktivieren des Kinomodus"
+  }
+}

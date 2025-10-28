@@ -1,0 +1,96 @@
+{
+  "extensionName": {
+    "message": "YouTube Theater Mode",
+    "description": "Nome da extensão"
+  },
+  "extensionDescription": {
+    "message": "Escurece elementos que não são de vídeo no YouTube para criar um ambiente de visualização focado",
+    "description": "Descrição da extensão"
+  },
+  "theaterMode": {
+    "message": "Modo Cinema",
+    "description": "Etiqueta de alternância do modo cinema"
+  },
+  "enabled": {
+    "message": "Ativado",
+    "description": "Status quando o modo cinema está ativado"
+  },
+  "disabled": {
+    "message": "Desativado",
+    "description": "Status quando o modo cinema está desativado"
+  },
+  "settings": {
+    "message": "Configurações",
+    "description": "Cabeçalho da seção de configurações"
+  },
+  "backgroundOpacity": {
+    "message": "Opacidade do fundo:",
+    "description": "Etiqueta do controle deslizante de opacidade"
+  },
+  "reset": {
+    "message": "Redefinir",
+    "description": "Texto do botão de redefinir"
+  },
+  "resetOpacityTooltip": {
+    "message": "Redefinir para a opacidade padrão",
+    "description": "Dica do botão de redefinição de opacidade"
+  },
+  "keyboardShortcut": {
+    "message": "Atalho de teclado:",
+    "description": "Etiqueta de configuração de atalho de teclado"
+  },
+  "infoText": {
+    "message": "Escurece o fundo enquanto assiste a vídeos do YouTube para criar um ambiente de visualização focado.",
+    "description": "Texto informativo sobre a extensão"
+  },
+  "connected": {
+    "message": "Conectado",
+    "description": "Status de conexão quando conectado"
+  },
+  "disconnected": {
+    "message": "Desconectado (Por favor, abra no YouTube)",
+    "description": "Status de conexão quando desconectado"
+  },
+  "shortcutSpace": {
+    "message": "Espaço",
+    "description": "Opção de tecla de espaço para atalhos"
+  },
+  "opacityChanged": {
+    "message": "Opacidade alterada para $OPACITY$%",
+    "description": "Mensagem de feedback quando a opacidade muda",
+    "placeholders": {
+      "opacity": {
+        "content": "$1",
+        "example": "70"
+      }
+    }
+  },
+  "theaterModeEnabled": {
+    "message": "Modo cinema ativado",
+    "description": "Mensagem de acessibilidade quando o modo cinema é ativado"
+  },
+  "theaterModeDisabled": {
+    "message": "Modo cinema desativado",
+    "description": "Mensagem de acessibilidade quando o modo cinema é desativado"
+  },
+  "loading": {
+    "message": "Carregando...",
+    "description": "Texto do estado de carregamento"
+  },
+  "error": {
+    "message": "Erro",
+    "description": "Mensagem de erro genérica"
+  },
+  "connectionError": {
+    "message": "Erro de conexão. Por favor, atualize a página.",
+    "description": "Mensagem de erro quando a conexão falha"
+  },
+  "enableTheaterMode": {
+    "message": "Ativar modo cinema",
+    "description": "Mensagem de acessibilidade para ativar o modo cinema"
+  },
+  "disableTheaterMode": {
+    "message": "Desativar modo cinema",
+    "description": "Mensagem de acessibilidade para desativar o modo cinema"
+  }
+}

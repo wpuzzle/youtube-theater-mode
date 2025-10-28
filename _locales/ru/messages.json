@@ -1,0 +1,96 @@
+{
+  "extensionName": {
+    "message": "YouTube Theater Mode",
+    "description": "Название расширения"
+  },
+  "extensionDescription": {
+    "message": "Затемняет элементы, не относящиеся к видео, на YouTube для создания сфокусированной среды просмотра",
+    "description": "Описание расширения"
+  },
+  "theaterMode": {
+    "message": "Режим кинотеатра",
+    "description": "Метка переключателя режима кинотеатра"
+  },
+  "enabled": {
+    "message": "Включено",
+    "description": "Статус, когда режим кинотеатра включен"
+  },
+  "disabled": {
+    "message": "Выключено",
+    "description": "Статус, когда режим кинотеатра выключен"
+  },
+  "settings": {
+    "message": "Настройки",
+    "description": "Заголовок раздела настроек"
+  },
+  "backgroundOpacity": {
+    "message": "Прозрачность фона:",
+    "description": "Метка ползунка прозрачности"
+  },
+  "reset": {
+    "message": "Сбросить",
+    "description": "Текст кнопки сброса"
+  },
+  "resetOpacityTooltip": {
+    "message": "Сбросить до прозрачности по умолчанию",
+    "description": "Подсказка кнопки сброса прозрачности"
+  },
+  "keyboardShortcut": {
+    "message": "Горячая клавиша:",
+    "description": "Метка настройки горячей клавиши"
+  },
+  "infoText": {
+    "message": "Затемняет фон при просмотре видео на YouTube для создания сфокусированной среды просмотра.",
+    "description": "Информационный текст о расширении"
+  },
+  "connected": {
+    "message": "Подключено",
+    "description": "Статус подключения при подключении"
+  },
+  "disconnected": {
+    "message": "Отключено (Пожалуйста, откройте на YouTube)",
+    "description": "Статус подключения при отключении"
+  },
+  "shortcutSpace": {
+    "message": "Пробел",
+    "description": "Опция клавиши пробела для горячих клавиш"
+  },
+  "opacityChanged": {
+    "message": "Прозрачность изменена на $OPACITY$%",
+    "description": "Сообщение обратной связи при изменении прозрачности",
+    "placeholders": {
+      "opacity": {
+        "content": "$1",
+        "example": "70"
+      }
+    }
+  },
+  "theaterModeEnabled": {
+    "message": "Режим кинотеатра включен",
+    "description": "Сообщение о доступности при включении режима кинотеатра"
+  },
+  "theaterModeDisabled": {
+    "message": "Режим кинотеатра выключен",
+    "description": "Сообщение о доступности при выключении режима кинотеатра"
+  },
+  "loading": {
+    "message": "Загрузка...",
+    "description": "Текст состояния загрузки"
+  },
+  "error": {
+    "message": "Ошибка",
+    "description": "Общее сообщение об ошибке"
+  },
+  "connectionError": {
+    "message": "Ошибка подключения. Пожалуйста, обновите страницу.",
+    "description": "Сообщение об ошибке при сбое подключения"
+  },
+  "enableTheaterMode": {
+    "message": "Включить режим кинотеатра",
+    "description": "Сообщение о доступности для включения режима кинотеатра"
+  },
+  "disableTheaterMode": {
+    "message": "Выключить режим кинотеатра",
+    "description": "Сообщение о доступности для выключения режима кинотеатра"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "extensionName": {
+    "message": "YouTube Theater Mode",
+    "description": "Nome dell'estensione"
+  },
+  "extensionDescription": {
+    "message": "Oscura gli elementi non video su YouTube per creare un ambiente di visualizzazione focalizzato",
+    "description": "Descrizione dell'estensione"
+  },
+  "theaterMode": {
+    "message": "Modalità Cinema",
+    "description": "Etichetta per l'interruttore della modalità cinema"
+  },
+  "enabled": {
+    "message": "Attivato",
+    "description": "Stato quando la modalità cinema è attivata"
+  },
+  "disabled": {
+    "message": "Disattivato",
+    "description": "Stato quando la modalità cinema è disattivata"
+  },
+  "settings": {
+    "message": "Impostazioni",
+    "description": "Intestazione della sezione impostazioni"
+  },
+  "backgroundOpacity": {
+    "message": "Opacità dello sfondo:",
+    "description": "Etichetta per il cursore dell'opacità"
+  },
+  "reset": {
+    "message": "Ripristina",
+    "description": "Testo del pulsante di ripristino"
+  },
+  "resetOpacityTooltip": {
+    "message": "Ripristina l'opacità predefinita",
+    "description": "Suggerimento per il pulsante di ripristino dell'opacità"
+  },
+  "keyboardShortcut": {
+    "message": "Scorciatoia da tastiera:",
+    "description": "Etichetta per l'impostazione della scorciatoia da tastiera"
+  },
+  "infoText": {
+    "message": "Oscura lo sfondo durante la visione di video su YouTube per creare un ambiente di visualizzazione focalizzato.",
+    "description": "Testo informativo sull'estensione"
+  },
+  "connected": {
+    "message": "Connesso",
+    "description": "Stato di connessione quando connesso"
+  },
+  "disconnected": {
+    "message": "Non connesso (Si prega di aprire su YouTube)",
+    "description": "Stato di connessione quando non connesso"
+  },
+  "shortcutSpace": {
+    "message": "Spazio",
+    "description": "Opzione del tasto spazio per le scorciatoie"
+  },
+  "opacityChanged": {
+    "message": "Opacità modificata a $OPACITY$%",
+    "description": "Messaggio di feedback quando cambia l'opacità",
+    "placeholders": {
+      "opacity": {
+        "content": "$1",
+        "example": "70"
+      }
+    }
+  },
+  "theaterModeEnabled": {
+    "message": "Modalità cinema attivata",
+    "description": "Messaggio di accessibilità quando la modalità cinema è attivata"
+  },
+  "theaterModeDisabled": {
+    "message": "Modalità cinema disattivata",
+    "description": "Messaggio di accessibilità quando la modalità cinema è disattivata"
+  },
+  "loading": {
+    "message": "Caricamento...",
+    "description": "Testo dello stato di caricamento"
+  },
+  "error": {
+    "message": "Errore",
+    "description": "Messaggio di errore generico"
+  },
+  "connectionError": {
+    "message": "Errore di connessione. Si prega di aggiornare la pagina.",
+    "description": "Messaggio di errore quando la connessione fallisce"
+  },
+  "enableTheaterMode": {
+    "message": "Attiva modalità cinema",
+    "description": "Messaggio di accessibilità per attivare la modalità cinema"
+  },
+  "disableTheaterMode": {
+    "message": "Disattiva modalità cinema",
+    "description": "Messaggio di accessibilità per disattivare la modalità cinema"
+  }
+}

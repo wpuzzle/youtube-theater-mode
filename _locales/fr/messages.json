@@ -1,0 +1,96 @@
+{
+  "extensionName": {
+    "message": "YouTube Theater Mode",
+    "description": "Nom de l'extension"
+  },
+  "extensionDescription": {
+    "message": "Atténue les éléments non vidéo sur YouTube pour créer un environnement de visionnage concentré",
+    "description": "Description de l'extension"
+  },
+  "theaterMode": {
+    "message": "Mode Cinéma",
+    "description": "Étiquette de basculement du mode cinéma"
+  },
+  "enabled": {
+    "message": "Activé",
+    "description": "État lorsque le mode cinéma est activé"
+  },
+  "disabled": {
+    "message": "Désactivé",
+    "description": "État lorsque le mode cinéma est désactivé"
+  },
+  "settings": {
+    "message": "Paramètres",
+    "description": "En-tête de la section des paramètres"
+  },
+  "backgroundOpacity": {
+    "message": "Opacité de l'arrière-plan :",
+    "description": "Étiquette du curseur d'opacité"
+  },
+  "reset": {
+    "message": "Réinitialiser",
+    "description": "Texte du bouton de réinitialisation"
+  },
+  "resetOpacityTooltip": {
+    "message": "Réinitialiser à l'opacité par défaut",
+    "description": "Info-bulle du bouton de réinitialisation de l'opacité"
+  },
+  "keyboardShortcut": {
+    "message": "Raccourci clavier :",
+    "description": "Étiquette de paramètre de raccourci clavier"
+  },
+  "infoText": {
+    "message": "Atténue l'arrière-plan lors du visionnage de vidéos YouTube pour créer un environnement de visionnage concentré.",
+    "description": "Texte d'information sur l'extension"
+  },
+  "connected": {
+    "message": "Connecté",
+    "description": "État de connexion lorsque connecté"
+  },
+  "disconnected": {
+    "message": "Déconnecté (Veuillez ouvrir sur YouTube)",
+    "description": "État de connexion lorsque déconnecté"
+  },
+  "shortcutSpace": {
+    "message": "Espace",
+    "description": "Option de touche espace pour les raccourcis"
+  },
+  "opacityChanged": {
+    "message": "Opacité changée à $OPACITY$%",
+    "description": "Message de retour lorsque l'opacité change",
+    "placeholders": {
+      "opacity": {
+        "content": "$1",
+        "example": "70"
+      }
+    }
+  },
+  "theaterModeEnabled": {
+    "message": "Mode cinéma activé",
+    "description": "Message d'accessibilité lorsque le mode cinéma est activé"
+  },
+  "theaterModeDisabled": {
+    "message": "Mode cinéma désactivé",
+    "description": "Message d'accessibilité lorsque le mode cinéma est désactivé"
+  },
+  "loading": {
+    "message": "Chargement...",
+    "description": "Texte de l'état de chargement"
+  },
+  "error": {
+    "message": "Erreur",
+    "description": "Message d'erreur générique"
+  },
+  "connectionError": {
+    "message": "Erreur de connexion. Veuillez actualiser la page.",
+    "description": "Message d'erreur lorsque la connexion échoue"
+  },
+  "enableTheaterMode": {
+    "message": "Activer le mode cinéma",
+    "description": "Message d'accessibilité pour activer le mode cinéma"
+  },
+  "disableTheaterMode": {
+    "message": "Désactiver le mode cinéma",
+    "description": "Message d'accessibilité pour désactiver le mode cinéma"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "extensionName": {
+    "message": "YouTube Theater Mode",
+    "description": "Nombre de la extensión"
+  },
+  "extensionDescription": {
+    "message": "Atenúa los elementos que no son de vídeo en YouTube para crear un entorno de visualización enfocado",
+    "description": "Descripción de la extensión"
+  },
+  "theaterMode": {
+    "message": "Modo Teatro",
+    "description": "Etiqueta de alternancia del modo teatro"
+  },
+  "enabled": {
+    "message": "Activado",
+    "description": "Estado cuando el modo teatro está activado"
+  },
+  "disabled": {
+    "message": "Desactivado",
+    "description": "Estado cuando el modo teatro está desactivado"
+  },
+  "settings": {
+    "message": "Configuración",
+    "description": "Encabezado de la sección de configuración"
+  },
+  "backgroundOpacity": {
+    "message": "Opacidad del fondo:",
+    "description": "Etiqueta del control deslizante de opacidad"
+  },
+  "reset": {
+    "message": "Restablecer",
+    "description": "Texto del botón de restablecer"
+  },
+  "resetOpacityTooltip": {
+    "message": "Restablecer a la opacidad predeterminada",
+    "description": "Información sobre herramientas del botón de restablecer opacidad"
+  },
+  "keyboardShortcut": {
+    "message": "Atajo de teclado:",
+    "description": "Etiqueta de configuración de atajo de teclado"
+  },
+  "infoText": {
+    "message": "Atenúa el fondo mientras ves vídeos de YouTube para crear un entorno de visualización enfocado.",
+    "description": "Texto informativo sobre la extensión"
+  },
+  "connected": {
+    "message": "Conectado",
+    "description": "Estado de conexión cuando está conectado"
+  },
+  "disconnected": {
+    "message": "Desconectado (Por favor, abre en YouTube)",
+    "description": "Estado de conexión cuando está desconectado"
+  },
+  "shortcutSpace": {
+    "message": "Espacio",
+    "description": "Opción de tecla de espacio para atajos"
+  },
+  "opacityChanged": {
+    "message": "Opacidad cambiada a $OPACITY$%",
+    "description": "Mensaje de retroalimentación cuando cambia la opacidad",
+    "placeholders": {
+      "opacity": {
+        "content": "$1",
+        "example": "70"
+      }
+    }
+  },
+  "theaterModeEnabled": {
+    "message": "Modo teatro activado",
+    "description": "Mensaje de accesibilidad cuando se activa el modo teatro"
+  },
+  "theaterModeDisabled": {
+    "message": "Modo teatro desactivado",
+    "description": "Mensaje de accesibilidad cuando se desactiva el modo teatro"
+  },
+  "loading": {
+    "message": "Cargando...",
+    "description": "Texto del estado de carga"
+  },
+  "error": {
+    "message": "Error",
+    "description": "Mensaje de error genérico"
+  },
+  "connectionError": {
+    "message": "Error de conexión. Por favor, actualiza la página.",
+    "description": "Mensaje de error cuando falla la conexión"
+  },
+  "enableTheaterMode": {
+    "message": "Activar modo teatro",
+    "description": "Mensaje de accesibilidad para activar el modo teatro"
+  },
+  "disableTheaterMode": {
+    "message": "Desactivar modo teatro",
+    "description": "Mensaje de accesibilidad para desactivar el modo teatro"
+  }
+}

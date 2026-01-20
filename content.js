@@ -58,6 +58,10 @@ class TheaterModeController {
       this.currentOpacity = this.settings.opacity;
       this.isTheaterModeActive = this.settings.isEnabled;
 
+      console.log(
+        `YouTube Theater Mode: 設定読み込み完了 - 透明度: ${this.currentOpacity}, シアターモード: ${this.isTheaterModeActive}`
+      );
+
       // YouTube動画プレーヤーを検出
       const player = await this.detectVideoPlayer();
       if (!player) {
@@ -70,7 +74,15 @@ class TheaterModeController {
 
       // 初期状態に応じてシアターモードを適用
       if (this.isTheaterModeActive) {
+        // CSS変数を先に設定（applyTheaterModeでも設定するが、確実に設定するため）
+        document.documentElement.style.setProperty(
+          "--theater-mode-opacity",
+          this.currentOpacity
+        );
         await this.applyTheaterMode();
+        this.updateButtonState();
+        // 状態変更を通知
+        notifyStateChange(true, this.currentOpacity);
       }
 
       this.initialized = true;

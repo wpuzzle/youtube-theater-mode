@@ -307,11 +307,17 @@ class TheaterModeController {
       `YouTube Theater Mode: ${targets.length}個のオーバーレイ対象要素を検出しました`
     );
 
+    // 現在の透明度をCSS変数に設定
+    document.documentElement.style.setProperty(
+      "--theater-mode-opacity",
+      this.currentOpacity
+    );
+
     // 各要素にオーバーレイを適用
     targets.forEach((element) => {
       if (!element.classList.contains("theater-mode-overlay")) {
         element.classList.add("theater-mode-overlay");
-        // CSSで透明度を設定するため、ここでは個別に設定しない
+        element.style.opacity = this.currentOpacity;
         this.overlayElements.push(element);
       }
     });

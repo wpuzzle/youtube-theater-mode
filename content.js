@@ -55,11 +55,13 @@ class TheaterModeController {
       // 設定を読み込み
       this.settingsManager = new SettingsManager();
       this.settings = await this.settingsManager.loadSettings();
-      this.currentOpacity = this.settings.opacity;
-      this.isTheaterModeActive = this.settings.isEnabled;
+      // リロード時は透明度をデフォルト値（70%）に戻す
+      this.currentOpacity = 0.7;
+      // リロード時はシアターモードを常にオフにする
+      this.isTheaterModeActive = false;
 
       console.log(
-        `YouTube Theater Mode: 設定読み込み完了 - 透明度: ${this.currentOpacity}, シアターモード: ${this.isTheaterModeActive}`
+        `YouTube Theater Mode: 初期化完了 - 透明度: ${this.currentOpacity}, シアターモード: ${this.isTheaterModeActive}`
       );
 
       // YouTube動画プレーヤーを検出
@@ -71,19 +73,6 @@ class TheaterModeController {
 
       // キーボードショートカットを設定
       this.setupKeyboardShortcuts();
-
-      // 初期状態に応じてシアターモードを適用
-      if (this.isTheaterModeActive) {
-        // CSS変数を先に設定（applyTheaterModeでも設定するが、確実に設定するため）
-        document.documentElement.style.setProperty(
-          "--theater-mode-opacity",
-          this.currentOpacity
-        );
-        await this.applyTheaterMode();
-        this.updateButtonState();
-        // 状態変更を通知
-        notifyStateChange(true, this.currentOpacity);
-      }
 
       this.initialized = true;
       console.log("YouTube Theater Mode: コントローラー初期化完了");
